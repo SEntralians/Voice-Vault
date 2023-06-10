@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import dayjs from "dayjs";
 import {
   PlusCircleIcon,
@@ -41,11 +41,22 @@ const MindDump = () => {
   const { data: journals } = api.journal.getUserJournals.useQuery();
   const { data: journal } = api.journal.getJournal.useQuery(
     { id: selectedJournalId },
-    { enabled: !!selectedJournalId }
+    {
+      enabled: !!selectedJournalId,
+      onSuccess: (data) => {
+        if (data) {
+          setValue("title", data.title);
+          setValue("description", data.description);
+        }
+      },
+    }
   );
   const { mutate: createJournal } = api.journal.createJournal.useMutation({
     onSuccess: async () => {
-      reset();
+      reset({
+        title: "",
+        description: "",
+      });
       setJournalStatus(JournalStatus.NotUsing);
       await utils.journal.getUserJournals.invalidate();
       await utils.journal.getJournal.invalidate();
@@ -54,7 +65,10 @@ const MindDump = () => {
   });
   const { mutate: updateJournal } = api.journal.updateJournal.useMutation({
     onSuccess: async () => {
-      reset();
+      reset({
+        title: "",
+        description: "",
+      });
       setJournalStatus(JournalStatus.NotUsing);
       await utils.journal.getUserJournals.invalidate();
       await utils.journal.getJournal.invalidate();
@@ -71,13 +85,17 @@ const MindDump = () => {
   });
 
   const setIsCreatingJournal = () => {
+    reset({
+      title: "",
+      description: "",
+    });
     setJournalStatus(JournalStatus.Creating);
   };
 
   const addJournal = (journal: Journal) => {
     createJournal({
       title: journal.title,
-      description: journal.description || "",
+      description: journal.description,
     });
   };
 
@@ -86,7 +104,7 @@ const MindDump = () => {
     updateJournal({
       id: selectedJournalId,
       title: journal.title,
-      description: journal.description || "",
+      description: journal.description,
     });
   };
 
@@ -104,13 +122,6 @@ const MindDump = () => {
   const isCreatingJournal = journalStatus === JournalStatus.Creating;
   const isEditingJournal = journalStatus === JournalStatus.Editing;
   const isNotUsingJournal = journalStatus === JournalStatus.NotUsing;
-
-  useEffect(() => {
-    if (journal) {
-      setValue("title", journal.title);
-      setValue("description", journal.description);
-    }
-  }, [journal, setValue]);
 
   if (!journals) {
     return <div></div>;
