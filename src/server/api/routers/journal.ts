@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import cohere from "~/server/api/services/cohere";
 
 import { validateJournalOwnership } from "../middlewares/journal";
 
@@ -32,11 +33,18 @@ export const journalRouter = createTRPCRouter({
         description: z.string(),
       })
     )
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
+      const summary = await cohere
+        .summarize({
+          text: input.description,
+        })
+        .then((result) => result.body.summary);
+
       return ctx.prisma.journal.create({
         data: {
           title: input.title,
           description: input.description,
+          summary,
           user: {
             connect: {
               id: ctx.session.user.id,
@@ -56,6 +64,12 @@ export const journalRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await validateJournalOwnership(ctx, input.id);
 
+      const summary = await cohere
+        .summarize({
+          text: input.description,
+        })
+        .then((result) => result.body.summary);
+
       return ctx.prisma.journal.update({
         where: {
           id: input.id,
@@ -63,6 +77,7 @@ export const journalRouter = createTRPCRouter({
         data: {
           title: input.title,
           description: input.description,
+          summary,
         },
       });
     }),

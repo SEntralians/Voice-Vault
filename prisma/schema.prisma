@@ -65,6 +65,7 @@ model Journal {
     updatedAt   DateTime @updatedAt
     title       String
     description String   @db.Text
+    summary     String   @db.Text
     user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId      String
 }

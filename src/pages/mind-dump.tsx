@@ -195,12 +195,7 @@ const MindDump = () => {
 
             <p className="mt-20 font-bold">Summary:</p>
             <div className="mt-5 bg-primary-200 px-5 py-3">
-              <ul className="ml-4 mt-2 list-disc ">
-                <li>Bullet point 1</li>
-                <li>Bullet point 2</li>
-                <li>Bullet point 3</li>
-                {/* Add more bullet points as needed */}
-              </ul>
+              {journal.summary}
             </div>
           </div>
         )}
