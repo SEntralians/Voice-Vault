@@ -5,6 +5,7 @@ import {
   BookmarkSquareIcon,
   CloudIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import { getFirstDayOfWeek, getLastDayOfWeek } from "~/helpers/dates";
 
 import type { NextPage } from "next";
@@ -47,9 +48,11 @@ const Home: NextPage = () => {
           </div>
           <div className="flex flex-row gap-10">
             <InboxIcon className="h-10 w-10" />
-            <button className="rounded-lg bg-secondary-100 px-5 font-semibold text-black hover:opacity-80">
-              Mind Dump Here
-            </button>
+            <Link href="/mind-dump">
+              <button className="rounded-lg bg-secondary-100 px-5 py-2 font-semibold text-black hover:opacity-80">
+                Mind Dump Here
+              </button>
+            </Link>
           </div>
           <div className="flex flex-row gap-5">
             <BookmarkSquareIcon className="h-10 w-10" />
