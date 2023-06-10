@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { getFirstDayOfWeek, getLastDayOfWeek } from "~/helpers/dates";
+import { withAuth } from "~/middlewares";
 
 import type { NextPage } from "next";
 
@@ -102,4 +103,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default withAuth(Home);

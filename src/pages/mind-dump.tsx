@@ -1,6 +1,7 @@
 import React from "react";
 import dayjs from "dayjs";
-import { BookmarkSquareIcon } from "@heroicons/react/24/solid";
+import { BookmarkSquareIcon, PlusCircleIcon } from "@heroicons/react/24/solid";
+import { withAuth } from "~/middlewares";
 
 const data = [
   {
@@ -53,11 +54,15 @@ const data = [
   },
 ];
 
-const MyPage = () => {
+const MindDump = () => {
   return (
     <div className="flex text-white">
       {/* Left Side */}
       <div className="my-10 max-h-screen w-3/12 overflow-y-scroll">
+        <div className="mx-5 mb-5 flex cursor-pointer items-center gap-3 rounded-lg border border-white p-5 hover:opacity-50">
+          <PlusCircleIcon className="text-primary-500 h-8 w-8" />
+          <div className="text-2xl font-bold">New Journal</div>
+        </div>
         {data.map((item) => (
           <div
             key={item.createdAt.toISOString()}
@@ -109,4 +114,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default withAuth(MindDump);
