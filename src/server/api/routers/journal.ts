@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
+import { validateJournalOwnership } from "../middlewares/journal";
+
 export const journalRouter = createTRPCRouter({
   getUserJournals: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.journal.findMany({
@@ -11,9 +13,12 @@ export const journalRouter = createTRPCRouter({
   }),
   getJournal: protectedProcedure
     .input(z.object({ id: z.string().nullable() }))
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       const { id } = input;
       if (!id) return null;
+
+      await validateJournalOwnership(ctx, id);
+
       return ctx.prisma.journal.findUnique({
         where: {
           id,
@@ -48,7 +53,9 @@ export const journalRouter = createTRPCRouter({
         description: z.string(),
       })
     )
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
+      await validateJournalOwnership(ctx, input.id);
+
       return ctx.prisma.journal.update({
         where: {
           id: input.id,
@@ -65,7 +72,10 @@ export const journalRouter = createTRPCRouter({
         id: z.string(),
       })
     )
-    .mutation(({ input, ctx }) => {
+
+    .mutation(async ({ input, ctx }) => {
+      await validateJournalOwnership(ctx, input.id);
+
       return ctx.prisma.journal.delete({
         where: {
           id: input.id,

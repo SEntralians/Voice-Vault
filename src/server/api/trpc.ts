@@ -83,6 +83,8 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
   },
 });
 
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
+
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)
  *
