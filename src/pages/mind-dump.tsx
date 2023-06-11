@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
+import { Loader } from "~/components/loaders";
 
 import { withAuth } from "~/middlewares";
 import { api } from "~/utils/api";
@@ -51,30 +52,32 @@ const MindDump = () => {
       },
     }
   );
-  const { mutate: createJournal } = api.journal.createJournal.useMutation({
-    onSuccess: async () => {
-      reset({
-        title: "",
-        description: "",
-      });
-      setJournalStatus(JournalStatus.NotUsing);
-      await utils.journal.getUserJournals.invalidate();
-      await utils.journal.getJournal.invalidate();
-      toast.success("Journal created!");
-    },
-  });
-  const { mutate: updateJournal } = api.journal.updateJournal.useMutation({
-    onSuccess: async () => {
-      reset({
-        title: "",
-        description: "",
-      });
-      setJournalStatus(JournalStatus.NotUsing);
-      await utils.journal.getUserJournals.invalidate();
-      await utils.journal.getJournal.invalidate();
-      toast.success("Journal edited!");
-    },
-  });
+  const { mutate: createJournal, isLoading: isCreatingLoading } =
+    api.journal.createJournal.useMutation({
+      onSuccess: async () => {
+        reset({
+          title: "",
+          description: "",
+        });
+        setJournalStatus(JournalStatus.NotUsing);
+        await utils.journal.getUserJournals.invalidate();
+        await utils.journal.getJournal.invalidate();
+        toast.success("Journal created!");
+      },
+    });
+  const { mutate: updateJournal, isLoading: isUpdatingLoading } =
+    api.journal.updateJournal.useMutation({
+      onSuccess: async () => {
+        reset({
+          title: "",
+          description: "",
+        });
+        setJournalStatus(JournalStatus.NotUsing);
+        await utils.journal.getUserJournals.invalidate();
+        await utils.journal.getJournal.invalidate();
+        toast.success("Journal edited!");
+      },
+    });
   const { mutate: deleteJournal } = api.journal.deleteJournal.useMutation({
     onSuccess: async () => {
       setJournalStatus(JournalStatus.NotUsing);
@@ -244,9 +247,10 @@ const MindDump = () => {
             </div>
 
             <button
-              className="bg-primary-500 hover:bg-primary-700 focus:shadow-outline rounded px-4 py-2 font-bold text-white focus:outline-none"
+              className="hover:bg-primary-70 focus:shadow-outline flex flex-row gap-1 rounded bg-primary-200 px-4 py-2 font-bold text-white hover:opacity-80 focus:outline-none"
               type="submit"
             >
+              {isCreatingLoading && <Loader />}
               Add Journal
             </button>
           </form>
@@ -290,9 +294,10 @@ const MindDump = () => {
             </div>
 
             <button
-              className="bg-primary-500 hover:bg-primary-700 focus:shadow-outline rounded px-4 py-2 font-bold text-white focus:outline-none"
+              className="hover:bg-primary-70 focus:shadow-outline flex flex-row gap-1 rounded bg-primary-200 px-4 py-2 font-bold text-white hover:opacity-80 focus:outline-none"
               type="submit"
             >
+              {isUpdatingLoading && <Loader />}
               Edit Journal
             </button>
           </form>

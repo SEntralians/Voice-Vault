@@ -29,22 +29,28 @@ export const journalRouter = createTRPCRouter({
   createJournal: protectedProcedure
     .input(
       z.object({
-        title: z.string(),
+        title: z.string().min(1).max(100),
         description: z.string(),
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const summary = await cohere
-        .summarize({
-          text: input.description,
-        })
-        .then((result) => result.body.summary);
+      let summary: string | null = null;
+
+      try {
+        summary = await cohere
+          .summarize({
+            text: input.description,
+          })
+          .then((result) => result.body.summary);
+      } catch {
+        summary = input.description;
+      }
 
       return ctx.prisma.journal.create({
         data: {
           title: input.title,
           description: input.description,
-          summary,
+          summary: summary ?? input.description,
           user: {
             connect: {
               id: ctx.session.user.id,
@@ -64,11 +70,17 @@ export const journalRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await validateJournalOwnership(ctx, input.id);
 
-      const summary = await cohere
-        .summarize({
-          text: input.description,
-        })
-        .then((result) => result.body.summary);
+      let summary: string | null = null;
+
+      try {
+        summary = await cohere
+          .summarize({
+            text: input.description,
+          })
+          .then((result) => result.body.summary);
+      } catch {
+        summary = input.description;
+      }
 
       return ctx.prisma.journal.update({
         where: {
@@ -77,7 +89,7 @@ export const journalRouter = createTRPCRouter({
         data: {
           title: input.title,
           description: input.description,
-          summary,
+          summary: summary ?? input.description,
         },
       });
     }),
