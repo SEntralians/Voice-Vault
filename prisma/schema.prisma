@@ -57,6 +57,8 @@ model User {
     accounts      Account[]
     sessions      Session[]
     journals      Journal[]
+    createdChats  Chat[]    @relation("CreatorChats")
+    joinedChats   Chat[]    @relation("JoinerChats")
 }
 
 model Journal {
@@ -70,10 +72,56 @@ model Journal {
     userId      String
 }
 
+model Chat {
+    id                   String     @id @default(cuid())
+    createdAt            DateTime   @default(now())
+    updatedAt            DateTime   @updatedAt
+    expiresAt            DateTime
+    leftTopic            String
+    rightTopic           String
+    description          String     @db.Text
+    creator              User       @relation("CreatorChats", fields: [creatorId], references: [id])
+    creatorId            String
+    joiner               User?      @relation("JoinerChats", fields: [joinerId], references: [id])
+    joinerId             String?
+    creatorSelectedTopic String?
+    joinerSelectedTopic  String?
+    messages             Message[]
+    status               ChatStatus
+    chatTurn             ChatTurn   @default(CREATOR)
+}
+
+model Message {
+    id        String      @id @default(cuid())
+    createdAt DateTime    @default(now())
+    updatedAt DateTime    @updatedAt
+    chat      Chat        @relation(fields: [chatId], references: [id])
+    chatId    String
+    text      String      @db.Text
+    type      MessageType
+}
+
 model VerificationToken {
     identifier String
     token      String   @unique
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum ChatStatus {
+    PENDING
+    ON_GOING
+    EXPIRED
+    DONE
+}
+
+enum MessageType {
+    CREATOR
+    JOINER
+}
+
+enum ChatTurn {
+    CREATOR
+    JOINER
 }

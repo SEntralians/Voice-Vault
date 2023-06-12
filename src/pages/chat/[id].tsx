@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { withAuth } from "~/middlewares";
+import { useRouter } from "next/router";
 
 import type { ChangeEvent, FormEvent } from "react";
 import type { NextPage } from "next";
@@ -12,6 +13,9 @@ interface Message {
 }
 
 const Chat: NextPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -33,6 +37,10 @@ const Chat: NextPage = () => {
       setMessage("");
     }
   };
+
+  if (typeof id !== "string") {
+    return <div>Invalid Chat</div>;
+  }
 
   return (
     <div className="flex h-screen flex-col items-center justify-center bg-primary-100">
