@@ -32,15 +32,29 @@ const DiscussionsPage: React.FC = () => {
     },
   });
 
+  const { mutate: joinChat } = api.chat.joinChat.useMutation({
+    onSuccess: (data) => {
+      const { id } = data;
+      toast.success("Chat joined!");
+      setTimeout(() => {
+        void router.push(`/chat/${id}`);
+      }, 2000);
+    },
+  });
+
   const {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
     reset,
   } = useForm<FormData>();
 
-  const onSubmit = handleSubmitCreate((data) => {
+  const handleCreateChat = handleSubmitCreate((data) => {
     createChat(data);
   });
+
+  const handleJoinChat = () => {
+    joinChat({ id: roomId });
+  };
 
   return (
     <>
@@ -48,7 +62,7 @@ const DiscussionsPage: React.FC = () => {
         <div className="w-4/12 rounded-l-lg border-r py-4">
           <div className="h-1/2 rounded-t-lg border-b px-8 pb-4">
             <h1 className="mb-4 text-lg font-bold text-white">Create Chat</h1>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={handleCreateChat}>
               <div className="mb-4 flex">
                 <input
                   type="text"
@@ -80,7 +94,6 @@ const DiscussionsPage: React.FC = () => {
           </div>
           <div className="h-1/2 rounded-b-lg border-t px-8 pt-4">
             <h1 className="mb-4 text-lg font-bold text-white">Join Room</h1>
-            {/* <form onSubmit={void onSubmit}>
             <div className="mb-4">
               <input
                 type="text"
@@ -91,13 +104,12 @@ const DiscussionsPage: React.FC = () => {
               />
 
               <button
-                type="submit"
-                className="rounded-md bg-blue-500 px-4 py-2 text-white hover:opacity-80"
+                onClick={handleJoinChat}
+                className="mt-5 rounded-md bg-blue-500 px-4 py-2 text-white hover:opacity-80"
               >
                 Join Room
               </button>
             </div>
-          </form> */}
           </div>
         </div>
         <div className="flex-1"></div>
