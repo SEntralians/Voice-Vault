@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { EXPIRATION_TIME } from "../constants";
+import { TRPCError } from "@trpc/server";
 
 export const chatRouter = createTRPCRouter({
   getChat: protectedProcedure
@@ -13,6 +14,15 @@ export const chatRouter = createTRPCRouter({
         include: {
           creator: true,
           joiner: true,
+        },
+      });
+    }),
+  getMessages: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return ctx.prisma.message.findMany({
+        where: {
+          chatId: input.id,
         },
       });
     }),
@@ -44,6 +54,27 @@ export const chatRouter = createTRPCRouter({
   joinChat: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
+      // validate user is not the creator
+      const chat = await ctx.prisma.chat.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!chat) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Chat not found",
+        });
+      }
+
+      if (chat.creatorId === ctx.session.user.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot join your own chat",
+        });
+      }
+
       return ctx.prisma.chat.update({
         where: {
           id: input.id,
@@ -54,7 +85,121 @@ export const chatRouter = createTRPCRouter({
               id: ctx.session.user.id,
             },
           },
+          status: "ACCEPTED",
+        },
+      });
+    }),
+
+  startChat: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        joinerSelectedTopic: z.string().min(1).max(50),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      // validate that there is a creator and joiner
+      const chat = await ctx.prisma.chat.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!chat) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Chat not found",
+        });
+      }
+
+      if (!chat.creatorId || !chat.joinerId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Chat is not ready to start",
+        });
+      }
+
+      // validate that user id is joiner's id
+      if (chat.joinerId !== ctx.session.user.id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You are not the joiner of this chat",
+        });
+      }
+
+      // validate that joiner topic is one of the two topics
+      if (
+        chat.leftTopic !== input.joinerSelectedTopic &&
+        chat.rightTopic !== input.joinerSelectedTopic
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Joiner topic is not one of the two topics",
+        });
+      }
+
+      const creatorSelectedTopic =
+        chat.leftTopic === input.joinerSelectedTopic
+          ? chat.rightTopic
+          : chat.leftTopic;
+
+      return ctx.prisma.chat.update({
+        where: {
+          id: input.id,
+        },
+        data: {
           status: "ON_GOING",
+          joinerSelectedTopic: input.joinerSelectedTopic,
+          creatorSelectedTopic,
+        },
+      });
+    }),
+  sendMessage: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        message: z.string().min(1).max(200),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      // get turn
+      const chat = await ctx.prisma.chat.findUnique({
+        where: {
+          id: input.id,
+        },
+      });
+
+      if (!chat) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Chat not found",
+        });
+      }
+
+      const role =
+        chat.creatorId === ctx.session.user.id ? "CREATOR" : "JOINER";
+      const currentTurn = chat.chatTurn;
+
+      if (role !== currentTurn) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Not your turn",
+        });
+      }
+
+      // create message
+      return ctx.prisma.chat.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          chatTurn: role === "CREATOR" ? "JOINER" : "CREATOR",
+          messages: {
+            create: {
+              text: input.message,
+              type: role,
+            },
+          },
         },
       });
     }),
