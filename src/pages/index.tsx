@@ -4,6 +4,8 @@ import Head from "next/head";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
+  const { data: sessionData } = useSession();
+  console.log(sessionData);
   return (
     <>
       <Head>
