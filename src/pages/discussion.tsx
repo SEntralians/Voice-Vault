@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import NavBar from "~/components/navBar";
 
 import toast, { Toaster } from "react-hot-toast";
 
@@ -57,8 +58,9 @@ const DiscussionsPage: React.FC = () => {
   };
 
   return (
-    <>
-      <div className="flex h-screen">
+    <div className="flex flex-col h-screen">
+      <NavBar currentPage={"discussion"}/>
+      <div className="flex flex-1">
         <div className="w-4/12 rounded-l-lg border-r py-4">
           <div className="h-1/2 rounded-t-lg border-b px-8 pb-4">
             <h1 className="mb-4 text-lg font-bold text-white">Create Chat</h1>
@@ -115,7 +117,7 @@ const DiscussionsPage: React.FC = () => {
         <div className="flex-1"></div>
       </div>
       <Toaster />
-    </>
+    </div>
   );
 };
 

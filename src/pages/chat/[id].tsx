@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
 import { match } from "ts-pattern";
 import { MESSAGE_LIMIT } from "~/constants";
+import NavBar from "~/components/navBar";
 
 import type { ChangeEvent, FC } from "react";
 import type { User, ChatStatus, MessageType } from "@prisma/client";
@@ -142,6 +143,7 @@ const CreatorChatBox: FC<CreatorChatBoxProps> = ({
 
   return (
     <>
+      <NavBar currentPage={"discussion"}/>
       <div className="flex px-10 py-20">
         <div className="w-3/12">
           <button
