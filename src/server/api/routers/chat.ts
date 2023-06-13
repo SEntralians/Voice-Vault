@@ -21,8 +21,6 @@ export const chatRouter = createTRPCRouter({
   getMessages: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
-      await validateChatLimit(ctx, input.id);
-
       return ctx.prisma.message.findMany({
         where: {
           chatId: input.id,
@@ -193,7 +191,7 @@ export const chatRouter = createTRPCRouter({
       }
 
       // create message
-      return ctx.prisma.chat.update({
+      await ctx.prisma.chat.update({
         where: {
           id: input.id,
         },
@@ -207,5 +205,7 @@ export const chatRouter = createTRPCRouter({
           },
         },
       });
+
+      await validateChatLimit(ctx, input.id);
     }),
 });

@@ -336,13 +336,10 @@ const ChatMessage: FC<ChatMessageProps> = ({
 
   const [message, setMessage] = useState<string>("");
 
-  const {
-    data: chatMessages,
-    isLoading: isMessagesLoading,
-    isError: isMessagesError,
-  } = api.chat.getMessages.useQuery({
-    id,
-  });
+  const { data: chatMessages, isLoading: isMessagesLoading } =
+    api.chat.getMessages.useQuery({
+      id,
+    });
   const { mutate: sendMessage } = api.chat.sendMessage.useMutation({
     onSuccess: async () => {
       setMessage("");
@@ -360,10 +357,6 @@ const ChatMessage: FC<ChatMessageProps> = ({
   const handleSendMessage = () => {
     sendMessage({ id, message });
   };
-
-  if (isMessagesError) {
-    return <div>Error</div>;
-  }
 
   if (isMessagesLoading) {
     return <div>Loading...</div>;
