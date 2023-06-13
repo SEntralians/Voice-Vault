@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { UserGroupIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import {
+  UserGroupIcon,
+  PaperAirplaneIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/solid";
 import { withAuth } from "~/middlewares";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
@@ -24,7 +28,16 @@ const Chat: NextPage = () => {
     return <div>Loading...</div>;
   }
 
-  const { status, creator, joiner, leftTopic, rightTopic, description } = chat;
+  const {
+    status,
+    creator,
+    joiner,
+    leftTopic,
+    rightTopic,
+    description,
+    creatorSelectedTopic,
+    joinerSelectedTopic,
+  } = chat;
 
   const isCreator = creator.id === session.data?.user.id;
 
@@ -68,10 +81,26 @@ const Chat: NextPage = () => {
           />
         ))
         .with(["ON_GOING", true], () => (
-          <ChatMessage id={id} isCreator={isCreator} />
+          <ChatMessage
+            id={id}
+            isCreator={isCreator}
+            creator={creator}
+            joiner={joiner}
+            description={description}
+            creatorSelectedTopic={creatorSelectedTopic}
+            joinerSelectedTopic={joinerSelectedTopic}
+          />
         ))
         .with(["ON_GOING", false], () => (
-          <ChatMessage id={id} isCreator={isCreator} />
+          <ChatMessage
+            id={id}
+            isCreator={isCreator}
+            creator={creator}
+            joiner={joiner}
+            description={description}
+            creatorSelectedTopic={creatorSelectedTopic}
+            joinerSelectedTopic={joinerSelectedTopic}
+          />
         ))
         .run()}
     </>
@@ -279,6 +308,11 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
 interface ChatMessageProps {
   id: string;
   isCreator: boolean;
+  creator: User;
+  joiner: User | null;
+  description: string;
+  creatorSelectedTopic?: string | null;
+  joinerSelectedTopic?: string | null;
 }
 
 type MessageDetails = {
@@ -286,8 +320,17 @@ type MessageDetails = {
   color: string;
 };
 
-const ChatMessage: FC<ChatMessageProps> = ({ id, isCreator }) => {
+const ChatMessage: FC<ChatMessageProps> = ({
+  id,
+  isCreator,
+  creator,
+  joiner,
+  description,
+  creatorSelectedTopic,
+  joinerSelectedTopic,
+}) => {
   const utils = api.useContext();
+
   const [message, setMessage] = useState<string>("");
 
   const { data: chatMessages } = api.chat.getMessages.useQuery({
@@ -315,13 +358,30 @@ const ChatMessage: FC<ChatMessageProps> = ({ id, isCreator }) => {
     return <div>Loading...</div>;
   }
 
+  const messageCount = 60 - chatMessages.length;
+
   return (
     <>
-      <div className="flex h-screen flex-col items-center justify-center bg-primary-100">
-        <div className="my-20 flex h-screen w-full max-w-5xl flex-col rounded-lg bg-gray-900 shadow-xl">
-          <div className="border-b p-4">
-            <h1 className="text-2xl font-bold text-white">Messenger</h1>
+      <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
+        <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
+          <div className="flex items-center bg-primary-200 px-10 py-5">
+            <div className="flex items-center space-x-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                <UserCircleIcon className="h-6 w-6 text-white" />
+              </div>
+              <div className="text-lg font-medium text-white">
+                {joiner?.name}
+              </div>
+            </div>
+            <div className="mx-4 flex-1 text-center text-lg font-medium text-white">
+              {description}
+            </div>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500">
+              <UserCircleIcon className="h-4 w-4 text-white" />
+            </div>
+            <div className="text-lg font-medium text-white">{creator.name}</div>
           </div>
+
           <div className="flex flex-grow flex-col overflow-y-auto p-4">
             {chatMessages.map((chatMessage) => {
               const messagePattern = match<
@@ -360,6 +420,7 @@ const ChatMessage: FC<ChatMessageProps> = ({ id, isCreator }) => {
               );
             })}
           </div>
+
           <div className="p-4">
             <div className="flex items-center">
               <input
@@ -378,6 +439,44 @@ const ChatMessage: FC<ChatMessageProps> = ({ id, isCreator }) => {
                 <PaperAirplaneIcon className="h-5 w-5" />
               </button>
             </div>
+          </div>
+        </div>
+        <div className="flex h-screen flex-col items-center rounded-lg bg-gray-900 p-10">
+          <div className="mb-4 rounded-lg border bg-white p-4">
+            <div className="mb-2 rounded-lg border p-2">
+              <div className="text-sm text-gray-500">Joiner Selected Topic</div>
+            </div>
+            <div className="flex h-full items-center justify-center">
+              <div className="mb-5 text-2xl font-bold text-red-500">
+                {joinerSelectedTopic}
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-4 rounded-lg border bg-white p-4">
+            <div className="mb-2 rounded-lg border p-2">
+              <div className="text-sm text-gray-500">
+                Creator Selected Topic
+              </div>
+            </div>
+            <div className="flex h-full items-center justify-center">
+              <div className="mb-5 text-2xl font-bold text-blue-500">
+                {creatorSelectedTopic}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-grow items-center justify-center text-center text-white">
+            <div className="text-lg font-medium">
+              Number of Messages Left:{" "}
+              <span className="text-3xl font-bold">{messageCount}</span>
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <button className="rounded-md bg-red-500 px-4 py-2 text-white">
+              End Discussion
+            </button>
           </div>
         </div>
       </div>
