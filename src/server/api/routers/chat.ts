@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import { validateChatLimit } from "../middlewares/chat";
 import { EXPIRATION_TIME } from "../constants";
 import { TRPCError } from "@trpc/server";
 
 export const chatRouter = createTRPCRouter({
   getChat: protectedProcedure
     .input(z.object({ id: z.string() }))
-    .query(async ({ input, ctx }) => {
+    .query(({ input, ctx }) => {
       return ctx.prisma.chat.findUnique({
         where: {
           id: input.id,
@@ -20,6 +21,8 @@ export const chatRouter = createTRPCRouter({
   getMessages: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
+      await validateChatLimit(ctx, input.id);
+
       return ctx.prisma.message.findMany({
         where: {
           chatId: input.id,
@@ -162,6 +165,8 @@ export const chatRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      await validateChatLimit(ctx, input.id);
+
       // get turn
       const chat = await ctx.prisma.chat.findUnique({
         where: {

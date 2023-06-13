@@ -10,6 +10,7 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
 import { match } from "ts-pattern";
+import { MESSAGE_LIMIT } from "~/constants";
 
 import type { ChangeEvent, FC } from "react";
 import type { User, ChatStatus, MessageType } from "@prisma/client";
@@ -102,6 +103,8 @@ const Chat: NextPage = () => {
             joinerSelectedTopic={joinerSelectedTopic}
           />
         ))
+        .with(["DONE", true], () => <>Done - isCreator</>)
+        .with(["DONE", false], () => <>Done - isJoiner</>)
         .run()}
     </>
   );
@@ -333,7 +336,11 @@ const ChatMessage: FC<ChatMessageProps> = ({
 
   const [message, setMessage] = useState<string>("");
 
-  const { data: chatMessages } = api.chat.getMessages.useQuery({
+  const {
+    data: chatMessages,
+    isLoading: isMessagesLoading,
+    isError: isMessagesError,
+  } = api.chat.getMessages.useQuery({
     id,
   });
   const { mutate: sendMessage } = api.chat.sendMessage.useMutation({
@@ -354,132 +361,142 @@ const ChatMessage: FC<ChatMessageProps> = ({
     sendMessage({ id, message });
   };
 
-  if (!chatMessages) {
+  if (isMessagesError) {
+    return <div>Error</div>;
+  }
+
+  if (isMessagesLoading) {
     return <div>Loading...</div>;
   }
 
-  const messageCount = 60 - chatMessages.length;
-
   return (
     <>
-      <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
-        <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
-          <div className="flex items-center bg-primary-200 px-10 py-5">
-            <div className="flex items-center space-x-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
-                <UserCircleIcon className="h-6 w-6 text-white" />
+      {chatMessages && (
+        <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
+          <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
+            <div className="flex items-center bg-primary-200 px-10 py-5">
+              <div className="flex items-center space-x-4">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                  <UserCircleIcon className="h-6 w-6 text-white" />
+                </div>
+                <div className="text-lg font-medium text-white">
+                  {joiner?.name}
+                </div>
+              </div>
+              <div className="mx-4 flex-1 text-center text-lg font-medium text-white">
+                {description}
+              </div>
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500">
+                <UserCircleIcon className="h-4 w-4 text-white" />
               </div>
               <div className="text-lg font-medium text-white">
-                {joiner?.name}
+                {creator.name}
               </div>
             </div>
-            <div className="mx-4 flex-1 text-center text-lg font-medium text-white">
-              {description}
-            </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500">
-              <UserCircleIcon className="h-4 w-4 text-white" />
-            </div>
-            <div className="text-lg font-medium text-white">{creator.name}</div>
-          </div>
 
-          <div className="flex flex-grow flex-col overflow-y-auto p-4">
-            {chatMessages.map((chatMessage) => {
-              const messagePattern = match<
-                [boolean, MessageType],
-                MessageDetails
-              >([isCreator, chatMessage.type])
-                .with([true, "CREATOR"], () => ({
-                  position: "justify-end",
-                  color: "bg-blue-500",
-                }))
-                .with([true, "JOINER"], () => ({
-                  position: "justify-start",
-                  color: "bg-gray-700",
-                }))
-                .with([false, "CREATOR"], () => ({
-                  position: "justify-start",
-                  color: "bg-gray-700",
-                }))
-                .with([false, "JOINER"], () => ({
-                  position: "justify-end",
-                  color: "bg-blue-500",
-                }))
-                .exhaustive();
+            <div className="flex flex-grow flex-col overflow-y-auto p-4">
+              {chatMessages.map((chatMessage) => {
+                const messagePattern = match<
+                  [boolean, MessageType],
+                  MessageDetails
+                >([isCreator, chatMessage.type])
+                  .with([true, "CREATOR"], () => ({
+                    position: "justify-end",
+                    color: "bg-blue-500",
+                  }))
+                  .with([true, "JOINER"], () => ({
+                    position: "justify-start",
+                    color: "bg-gray-700",
+                  }))
+                  .with([false, "CREATOR"], () => ({
+                    position: "justify-start",
+                    color: "bg-gray-700",
+                  }))
+                  .with([false, "JOINER"], () => ({
+                    position: "justify-end",
+                    color: "bg-blue-500",
+                  }))
+                  .exhaustive();
 
-              return (
-                <div
-                  key={chatMessage.id}
-                  className={`mb-4 flex ${messagePattern.position}`}
-                >
+                return (
                   <div
-                    className={`${messagePattern.color} max-w-2/3 rounded-lg px-3 py-2 text-white`}
+                    key={chatMessage.id}
+                    className={`mb-4 flex ${messagePattern.position}`}
                   >
-                    {chatMessage.text}
+                    <div
+                      className={`${messagePattern.color} max-w-2/3 rounded-lg px-3 py-2 text-white`}
+                    >
+                      {chatMessage.text}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          <div className="p-4">
-            <div className="flex items-center">
-              <input
-                type="text"
-                value={message}
-                onChange={handleMessageChange}
-                className="flex-grow rounded-md bg-gray-800 px-3 py-2 text-white outline-none focus:ring-1 focus:ring-blue-500"
-                placeholder="Type your message..."
-              />
-              <button
-                type="submit"
-                className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white disabled:opacity-50"
-                disabled={message.length === 0}
-                onClick={handleSendMessage}
-              >
-                <PaperAirplaneIcon className="h-5 w-5" />
+            <div className="p-4">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={message}
+                  onChange={handleMessageChange}
+                  className="flex-grow rounded-md bg-gray-800 px-3 py-2 text-white outline-none focus:ring-1 focus:ring-blue-500"
+                  placeholder="Type your message..."
+                />
+                <button
+                  type="submit"
+                  className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white disabled:opacity-50"
+                  disabled={message.length === 0}
+                  onClick={handleSendMessage}
+                >
+                  <PaperAirplaneIcon className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="flex h-screen flex-col items-center rounded-lg bg-gray-900 p-10">
+            <div className="mb-4 rounded-lg border bg-white p-4">
+              <div className="mb-2 rounded-lg border p-2">
+                <div className="text-sm text-gray-500">
+                  Joiner Selected Topic
+                </div>
+              </div>
+              <div className="flex h-full items-center justify-center">
+                <div className="mb-5 text-2xl font-bold text-blue-500">
+                  {joinerSelectedTopic}
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-4 rounded-lg border bg-white p-4">
+              <div className="mb-2 rounded-lg border p-2">
+                <div className="text-sm text-gray-500">
+                  Creator Selected Topic
+                </div>
+              </div>
+              <div className="flex h-full items-center justify-center">
+                <div className="mb-5 text-2xl font-bold text-red-500">
+                  {creatorSelectedTopic}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-grow items-center justify-center text-center text-white">
+              <div className="text-lg font-medium">
+                Number of Messages Left:{" "}
+                <span className="text-3xl font-bold">
+                  {MESSAGE_LIMIT - chatMessages.length}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <button className="rounded-md bg-red-500 px-4 py-2 text-white">
+                End Discussion
               </button>
             </div>
           </div>
         </div>
-        <div className="flex h-screen flex-col items-center rounded-lg bg-gray-900 p-10">
-          <div className="mb-4 rounded-lg border bg-white p-4">
-            <div className="mb-2 rounded-lg border p-2">
-              <div className="text-sm text-gray-500">Joiner Selected Topic</div>
-            </div>
-            <div className="flex h-full items-center justify-center">
-              <div className="mb-5 text-2xl font-bold text-red-500">
-                {joinerSelectedTopic}
-              </div>
-            </div>
-          </div>
-
-          <div className="mb-4 rounded-lg border bg-white p-4">
-            <div className="mb-2 rounded-lg border p-2">
-              <div className="text-sm text-gray-500">
-                Creator Selected Topic
-              </div>
-            </div>
-            <div className="flex h-full items-center justify-center">
-              <div className="mb-5 text-2xl font-bold text-blue-500">
-                {creatorSelectedTopic}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-grow items-center justify-center text-center text-white">
-            <div className="text-lg font-medium">
-              Number of Messages Left:{" "}
-              <span className="text-3xl font-bold">{messageCount}</span>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <button className="rounded-md bg-red-500 px-4 py-2 text-white">
-              End Discussion
-            </button>
-          </div>
-        </div>
-      </div>
+      )}
       <Toaster />
     </>
   );
