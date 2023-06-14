@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { validateChatLimit } from "../middlewares/chat";
 import { EXPIRATION_TIME } from "../constants";
 import { TRPCError } from "@trpc/server";
+import { getFallacyClassification } from "../services/huggingface";
 
 export const chatRouter = createTRPCRouter({
   getChat: protectedProcedure
@@ -165,6 +166,10 @@ export const chatRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       await validateChatLimit(ctx, input.id);
 
+      const fallacyResult = await getFallacyClassification({
+        inputs: input.message,
+      });
+
       // get turn
       const chat = await ctx.prisma.chat.findUnique({
         where: {
@@ -201,6 +206,8 @@ export const chatRouter = createTRPCRouter({
             create: {
               text: input.message,
               type: role,
+              fallacyPrediction: fallacyResult?.label,
+              fallacyScore: fallacyResult?.score,
             },
           },
         },
