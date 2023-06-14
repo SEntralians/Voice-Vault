@@ -4,7 +4,7 @@ interface Props {
   currentPage: string;
 }
 
-const NavBar: FC<Props> = ({ currentPage }) => {
+const Navbar: FC<Props> = ({ currentPage }) => {
   return (
     <>
       <nav className="relative bg-white shadow  dark:bg-gray-800">
@@ -83,4 +83,4 @@ const NavBar: FC<Props> = ({ currentPage }) => {
   );
 };
 
-export default NavBar;
+export default Navbar;

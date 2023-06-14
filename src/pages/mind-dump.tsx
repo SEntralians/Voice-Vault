@@ -9,7 +9,7 @@ import {
 import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Loader } from "~/components/loaders";
-import NavBar from "~/components/NavBar";
+import Navbar from "~/components/Navbar";
 
 import { withAuth } from "~/middlewares";
 import { api } from "~/utils/api";
@@ -133,7 +133,7 @@ const MindDump = () => {
 
   return (
     <>
-      <NavBar currentPage={"home"} />
+      <Navbar currentPage={"home"} />
       <div className="flex text-white">
         {/* Left Side */}
         <div className="my-10 max-h-screen w-3/12 overflow-y-scroll">
