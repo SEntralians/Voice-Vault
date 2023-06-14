@@ -8,7 +8,7 @@ import {
 import Link from "next/link";
 import { getFirstDayOfWeek, getLastDayOfWeek } from "~/helpers/dates";
 import { withAuth } from "~/middlewares";
-import NavBar from "~/components/navBar";
+import NavBar from "~/components/NavBar";
 
 import type { NextPage } from "next";
 
@@ -18,7 +18,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <NavBar currentPage={"home"}/>
+      <NavBar currentPage={"home"} />
       <div className="px-20 py-10">
         <h1 className="text-3xl font-bold text-white">
           What&apos;s on your mind, Hans?
@@ -46,10 +46,10 @@ const Home: NextPage = () => {
               </h3>
             </div>
             <div>
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni sint
-              nesciunt, obcaecati unde reprehenderit sapiente quis aliquam optio
-              placeat nulla asperiores deserunt sed eligendi fuga ullam commodi
-              soluta rerum non!
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni
+              sint nesciunt, obcaecati unde reprehenderit sapiente quis aliquam
+              optio placeat nulla asperiores deserunt sed eligendi fuga ullam
+              commodi soluta rerum non!
             </div>
             <div className="flex flex-row gap-10">
               <InboxIcon className="h-10 w-10" />
