@@ -7,7 +7,7 @@ interface InputData {
 type Result = {
   label: string;
   score: number;
-}[];
+}[][];
 
 export const getFallacyClassification = async (
   data: InputData,
@@ -23,7 +23,9 @@ export const getFallacyClassification = async (
       }
     );
     const result = (await response.json()) as Result;
+
     const sortedResult = result
+      .flat()
       .filter((res) => res.score > threshold)
       .sort((a, b) => b.score - a.score);
 
