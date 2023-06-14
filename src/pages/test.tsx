@@ -2,19 +2,30 @@ import { useEffect, useRef, useState } from "react";
 import {
   GestureRecognizer,
   FilesetResolver,
-  DrawingUtils,
 } from "@mediapipe/tasks-vision";
 
 const HandGestureRecognition = () => {
   const demosSectionRef = useRef(null);
   const gestureRecognizerRef = useRef(null);
-  const enableWebcamButtonRef = useRef(null);
   const videoRef = useRef(null);
-  const canvasElementRef = useRef(null);
   const gestureOutputRef = useRef(null);
   const [webcamRunning, setWebcamRunning] = useState(false);
+  const [listen, setListen] = useState(false)
+  const [recognition, setRecognition] = useState(null)
+  const [voices, setVoices] = useState([]);
 
   useEffect(() => {
+    const recognitionInitial = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognitionInitial.lang = "en-US";
+    recognitionInitial.continuous = true;
+    recognitionInitial.interimResults = true;
+    setRecognition(() => recognitionInitial)
+
+    setVoices(speechSynthesis.getVoices());
+    speechSynthesis.onvoiceschanged = () => {
+      setVoices(speechSynthesis.getVoices());
+    };
+
     const createGestureRecognizer = async () => {
       const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
@@ -29,25 +40,40 @@ const HandGestureRecognition = () => {
       });
       gestureRecognizerRef.current = recognizer;
       demosSectionRef.current.classList.remove("invisible");
+
+      enableCam()
     };
 
     createGestureRecognizer();
   }, []);
 
-  const hasGetUserMedia = () => {
-    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-  };
+  useEffect(() => {
+    if (listen) {
+      speak("listening")
+    } else {
+      speak("understood")
+    }
+  }, [listen])
+
+  function speak(words: string) {
+    speechSynthesis.cancel()
+    const utterance = new SpeechSynthesisUtterance(words);
+    if (voices.length > 108 && voices[108].name === "Microsoft Sonia Online (Natural) - English (United Kingdom)") {
+      utterance.voice = voices[108];
+      speechSynthesis.speak(utterance);
+    }
+  }
 
   const enableCam = async () => {
     if (!gestureRecognizerRef.current) {
       alert("Please wait for gestureRecognizer to load");
       return;
     }
-
+  
     setWebcamRunning((prevState) => !prevState);
-
+  
     const constraints = { video: true };
-
+  
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoRef.current.srcObject = stream;
@@ -75,33 +101,40 @@ const HandGestureRecognition = () => {
       lastVideoTime = video.currentTime;
       results = await gestureRecognizer.recognizeForVideo(video, nowInMs)
       if (results.gestures.length > 0) {
-        console.log(results.gestures[0][0].categoryName)
+        if (results.gestures[0][0].categoryName === "Thumb_Up") {
+          setListen(false)
+        } else if (results.gestures[0][0].categoryName === "Victory") {
+          setListen(true)
+        }
       }
     }
-    requestAnimationFrame(predictWebcam)
+    requestAnimationFrame(predictWebcam);
   };
 
+  useEffect(() => {
+    console.log(listen)
+  }, [listen])
+
   return (
-    <div>
-      <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet" />
-      <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js" />
-      <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous" />
-      <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous" />
+    <div className="w-screen h-screen fixed top-0 left-0 overflow-hidden">
+      <div>
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet" />
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js" />
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous" />
 
-      <section id="demos" className="invisible" ref={demosSectionRef}>
-
-        <div id="liveView" className="videoView">
-          <button id="webcamButton" className="mdc-button mdc-button--raised" onClick={enableCam} ref={enableWebcamButtonRef}>
-            <span className="mdc-button__ripple" />
-            <span className="mdc-button__label">{webcamRunning ? "DISABLE PREDICTIONS" : "ENABLE WEBCAM"}</span>
-          </button>
-          <div style={{ position: "relative" }}>
-            <video id="webcam" autoPlay playsInline ref={videoRef} />
-            <canvas className="output_canvas" id="output_canvas" width="1280" height="720" style={{ position: "absolute", left: "0px", top: "0px" }} ref={canvasElementRef} />
-            <p id="gesture_output" className="output" ref={gestureOutputRef} />
+        <div id="demos" className="invisible" ref={demosSectionRef}>
+          <div id="liveView" className="videoView">
+            <div style={{ position: "relative", visibility: "hidden" }}>
+              <video id="webcam" autoPlay playsInline ref={videoRef} />
+              <p id="gesture_output" className="output" ref={gestureOutputRef} />
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+      <button className="w-32 h-32 bg-white absolute bottom-10 right-10 rounded-full text-5xl p-0" onClick={() => setListen(!listen)}>
+        V
+      </button>
     </div>
   );
 };
