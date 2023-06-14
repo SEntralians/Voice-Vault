@@ -84,7 +84,8 @@ const Chat: NextPage = () => {
         ))
         .with(["ON_GOING", true], () => (
           <ChatMessage
-            id={id}
+            chatId={id}
+            userId={session.data?.user.id ?? ""}
             isCreator={isCreator}
             creator={creator}
             joiner={joiner}
@@ -95,7 +96,8 @@ const Chat: NextPage = () => {
         ))
         .with(["ON_GOING", false], () => (
           <ChatMessage
-            id={id}
+            chatId={id}
+            userId={session.data?.user.id ?? ""}
             isCreator={isCreator}
             creator={creator}
             joiner={joiner}
@@ -311,7 +313,8 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
 };
 
 interface ChatMessageProps {
-  id: string;
+  chatId: string;
+  userId: string;
   isCreator: boolean;
   creator: User;
   joiner: User | null;
@@ -326,7 +329,8 @@ type MessageDetails = {
 };
 
 const ChatMessage: FC<ChatMessageProps> = ({
-  id,
+  chatId,
+  userId,
   isCreator,
   creator,
   joiner,
@@ -335,17 +339,63 @@ const ChatMessage: FC<ChatMessageProps> = ({
   joinerSelectedTopic,
 }) => {
   const utils = api.useContext();
-
   const [message, setMessage] = useState<string>("");
+
+  const { data: ifUserHasOffered, isLoading: isOfferLoading } =
+    api.endRequest.getIfUserHasOffered.useQuery({
+      userId,
+      chatId,
+    });
+
+  const { data: pendingRequest, isLoading: isPendingRequestLoading } =
+    api.endRequest.getPendingEndRequests.useQuery({
+      userId,
+      chatId,
+    });
 
   const { data: chatMessages, isLoading: isMessagesLoading } =
     api.chat.getMessages.useQuery({
-      id,
+      id: chatId,
     });
+
   const { mutate: sendMessage } = api.chat.sendMessage.useMutation({
     onSuccess: async () => {
       setMessage("");
-      await utils.chat.getMessages.invalidate({ id });
+      await utils.chat.getMessages.invalidate({
+        id: chatId,
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const { mutate: offerEndDiscussion } = api.endRequest.offer.useMutation({
+    onSuccess: async () => {
+      await utils.endRequest.getIfUserHasOffered.invalidate({
+        userId,
+        chatId,
+      });
+      await utils.endRequest.getPendingEndRequests.invalidate({
+        userId,
+        chatId,
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
+  const { mutate: acceptEndDiscussion } = api.endRequest.answer.useMutation({
+    onSuccess: async () => {
+      await utils.endRequest.getIfUserHasOffered.invalidate({
+        userId,
+        chatId,
+      });
+      await utils.endRequest.getPendingEndRequests.invalidate({
+        userId,
+        chatId,
+      });
     },
     onError: (error) => {
       toast.error(error.message);
@@ -357,16 +407,31 @@ const ChatMessage: FC<ChatMessageProps> = ({
   };
 
   const handleSendMessage = () => {
-    sendMessage({ id, message });
+    sendMessage({ id: chatId, message });
   };
 
-  if (isMessagesLoading) {
+  const acceptOrReject = (answer: "ACCEPTED" | "REJECTED") => {
+    acceptEndDiscussion({
+      answer,
+      chatId,
+      userId,
+    });
+  };
+
+  const handleOfferEndDiscussion = () => {
+    offerEndDiscussion({
+      chatId,
+      userId,
+    });
+  };
+
+  if (isMessagesLoading || isOfferLoading || isPendingRequestLoading) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      {chatMessages && (
+      {chatMessages && ifUserHasOffered !== undefined && pendingRequest && (
         <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
           <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
             <div className="flex items-center bg-primary-200 px-10 py-5">
@@ -477,10 +542,39 @@ const ChatMessage: FC<ChatMessageProps> = ({
               </div>
             </div>
 
+            {pendingRequest.length > 0 && (
+              <div className="mb-4 flex flex-row justify-center rounded-lg border bg-white p-4">
+                <div className="text-sm text-gray-500">
+                  You have a pending request to end the discussion
+                </div>
+                <div className="mr-2">
+                  <button
+                    className="rounded-md bg-green-500 px-4 py-2 text-white hover:opacity-80"
+                    onClick={() => acceptOrReject("ACCEPTED")}
+                  >
+                    Accept
+                  </button>
+                </div>
+                <div className="ml-2">
+                  <button
+                    className="rounded-md bg-red-500 px-4 py-2 text-white hover:opacity-80"
+                    onClick={() => acceptOrReject("REJECTED")}
+                  >
+                    Reject
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="mt-4">
-              <button className="rounded-md bg-red-500 px-4 py-2 text-white">
-                End Discussion
-              </button>
+              {!ifUserHasOffered && (
+                <button
+                  className="rounded-md bg-red-500 px-4 py-2 text-white hover:opacity-80"
+                  onClick={handleOfferEndDiscussion}
+                >
+                  Offer End Discussion
+                </button>
+              )}
             </div>
           </div>
         </div>
