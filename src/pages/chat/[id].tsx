@@ -435,7 +435,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
                   value={message}
                   onChange={handleMessageChange}
                   className="flex-grow rounded-md bg-gray-800 px-3 py-2 text-white outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Type your message..."
+                  placeholder={`This chat has ${MESSAGE_LIMIT - chatMessages.length} messages left.`}
                 />
                 <button
                   type="submit"
@@ -472,15 +472,6 @@ const ChatMessage: FC<ChatMessageProps> = ({
                 <div className="mb-5 text-2xl font-bold text-red-500">
                   {creatorSelectedTopic}
                 </div>
-              </div>
-            </div>
-
-            <div className="flex flex-grow items-center justify-center text-center text-white">
-              <div className="text-lg font-medium">
-                Number of Messages Left:{" "}
-                <span className="text-3xl font-bold">
-                  {MESSAGE_LIMIT - chatMessages.length}
-                </span>
               </div>
             </div>
 
