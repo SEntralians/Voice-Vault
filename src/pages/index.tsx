@@ -26,17 +26,6 @@ const Home: NextPage = () => {
 
   }, [sessionData])
 
-  const commands = [
-    "Begin journaling",
-    "End journaling",
-    "Search my thoughts",
-    "Go to My Mental Space",
-    "Go to Discussions",
-    "Go to Challenges",
-    "Change app settings",
-    "Sign out"
-  ]
-
   return (
     <>
       {sessionData ?

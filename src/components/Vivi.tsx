@@ -4,7 +4,12 @@ import {
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
 
-const Vivi = (props) => {
+interface ViviProps {
+  message: string
+  setGreeted: () => void
+}
+
+const Vivi = (props: ViviProps) => {
   const demosSectionRef = useRef(null);
   const gestureRecognizerRef = useRef(null);
   const videoRef = useRef(null);
