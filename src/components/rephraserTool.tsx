@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import * as toxicity from "@tensorflow-models/toxicity";
-import useDebounce from "~/utils/debourncer";
+import useDebounce from "~/utils/debouncer";
 import Rephraser from "~/utils/rephraser";
 
 const RephraseTool = (): JSX.Element => {
@@ -27,14 +27,6 @@ const RephraseTool = (): JSX.Element => {
 
   return (
     <div className="container mx-auto p-4 w-full">
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
       <div className="relative inline-block text-left">
         <input
           type="text"
