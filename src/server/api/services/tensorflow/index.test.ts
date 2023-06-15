@@ -3,7 +3,8 @@ import { getTextToxicity } from "./index";
 
 describe("getTextToxicity", () => {
   it("should return an array of predictions", async () => {
-    const predictions = await getTextToxicity("I hate you so much, you suck");
+    const predictions = await getTextToxicity(["I hate you so much, you suck"]);
+    console.log(predictions);
     expect(predictions).toBeInstanceOf(Array);
   });
 });

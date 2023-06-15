@@ -11,6 +11,7 @@ import { useSession } from "next-auth/react";
 import toast, { Toaster } from "react-hot-toast";
 import { match } from "ts-pattern";
 import { MESSAGE_LIMIT } from "~/constants";
+import { DonePage } from "~/components/chat";
 import Navbar from "~/components/navbar";
 
 import type { ChangeEvent, FC } from "react";
@@ -106,8 +107,12 @@ const Chat: NextPage = () => {
             joinerSelectedTopic={joinerSelectedTopic}
           />
         ))
-        .with(["DONE", true], () => <>Done - isCreator</>)
-        .with(["DONE", false], () => <>Done - isJoiner</>)
+        .with(["DONE", true], () => (
+          <DonePage chatId={id} userId={session.data?.user.id ?? ""} />
+        ))
+        .with(["DONE", false], () => (
+          <DonePage chatId={id} userId={session.data?.user.id ?? ""} />
+        ))
         .run()}
     </>
   );

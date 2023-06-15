@@ -1,6 +1,7 @@
 import { exampleRouter } from "~/server/api/routers/example";
 import { journalRouter } from "~/server/api/routers/journal";
 import { chatRouter } from "~/server/api/routers/chat";
+import { analysisRouter } from "~/server/api/routers/analysis";
 import { endRequestRouter } from "~/server/api/routers/endRequest";
 import { createTRPCRouter } from "~/server/api/trpc";
 
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   journal: journalRouter,
   chat: chatRouter,
   endRequest: endRequestRouter,
+  analysis: analysisRouter,
 });
 
 // export type definition of API
