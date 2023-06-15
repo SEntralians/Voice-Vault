@@ -4,7 +4,7 @@ import {
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
 
-const HandGestureRecognition = () => {
+const Vivi = (props) => {
   const demosSectionRef = useRef(null);
   const gestureRecognizerRef = useRef(null);
   const videoRef = useRef(null);
@@ -55,6 +55,13 @@ const HandGestureRecognition = () => {
     }
   }, [listen])
 
+  useEffect(() => {
+    speak(props.message)
+    if (voices.length > 108 && voices[108].name === "Microsoft Sonia Online (Natural) - English (United Kingdom)") {
+      props.setGreeted(() => true)
+    }
+  }, [voices])
+
   function speak(words: string) {
     speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(words);
@@ -78,7 +85,6 @@ const HandGestureRecognition = () => {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       videoRef.current.srcObject = stream;
       videoRef.current.addEventListener("loadeddata", predictWebcam);
-      console.log("watching you!!!")
     } catch (error) {
       console.warn("getUserMedia() is not supported by your browser");
     }
@@ -139,4 +145,4 @@ const HandGestureRecognition = () => {
   );
 };
 
-export default HandGestureRecognition;
+export default Vivi;
