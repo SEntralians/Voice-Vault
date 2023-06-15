@@ -36,36 +36,59 @@ export const analysisRouter = createTRPCRouter({
         throw new Error("Chat not found");
       }
 
-      for (const message of chat.messages) {
-        try {
-          const [classification, toxicity] = await Promise.all([
-            getFallacyClassification({
-              inputs: message.text,
-            }),
-            getToxicityLevel({
-              inputs: message.text,
-            }),
-          ]);
+      try {
+        console.log(chat.messages.map((message) => message.text));
+        const [classification, toxicity] = await Promise.all([
+          getFallacyClassification(
+            {
+              inputs: chat.messages.map((message) => message.text),
+            },
+            0.1
+          ),
+          getToxicityLevel({
+            inputs: chat.messages.map((message) => message.text),
+          }),
+        ]);
 
-          await ctx.prisma.message.update({
-            where: {
-              id: message.id,
-            },
-            data: {
-              fallacyPrediction: classification?.label,
-              fallacyScore: classification?.score,
-              toxicityPrediction: toxicity?.label,
-              toxicityScore: toxicity?.score,
-            },
-          });
-        } catch (e) {
-          console.error(e);
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message:
-              "Something went wrong with the analysis. Please try again.",
-          });
+        console.log(classification, toxicity);
+
+        if (!classification || !toxicity) {
+          throw new Error("Something went wrong with the analysis");
         }
+
+        await ctx.prisma.$transaction(
+          classification
+            .map((c, idx) =>
+              ctx.prisma.message.update({
+                where: {
+                  id: chat.messages[idx]?.id,
+                },
+                data: {
+                  fallacyPrediction: c?.label,
+                  fallacyScore: c?.score,
+                },
+              })
+            )
+            .concat(
+              toxicity.map((t, idx) =>
+                ctx.prisma.message.update({
+                  where: {
+                    id: chat.messages[idx]?.id,
+                  },
+                  data: {
+                    toxicityPrediction: t?.label,
+                    toxicityScore: t?.score,
+                  },
+                })
+              )
+            )
+        );
+      } catch (e) {
+        console.error(e);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong with the analysis. Please try again.",
+        });
       }
     }),
 });
