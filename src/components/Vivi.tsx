@@ -8,18 +8,17 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 
 interface ViviProps {
   message: string
-  setGreeted: () => void
+  greeted: boolean
+  setGreeted: (boolean: boolean) => void
 }
 
 const Vivi = (props: ViviProps) => {
   const demosSectionRef = useRef(null);
-  const gestureRecognizerRef = useRef(null);
-  const videoRef = useRef(null);
+  const gestureRecognizerRef = useRef<GestureRecognizer>(null)
+  const videoRef = useRef<HTMLVideoElement>(null);
   const gestureOutputRef = useRef(null);
   const [webcamRunning, setWebcamRunning] = useState(false);
-  const [listen, setListen] = useState(false)
-  const [recognition, setRecognition] = useState(null)
-  const [voices, setVoices] = useState([]);
+  const [voices, setVoices] = useState([] as SpeechSynthesisVoice[])
 
   const {
     transcript,
@@ -37,10 +36,14 @@ const Vivi = (props: ViviProps) => {
   }
 
   useEffect(() => {
-    setVoices(speechSynthesis.getVoices());
+    // Get the voices that match the language code
+    const chosenVoice = speechSynthesis.getVoices().filter(voice => voice.name === "Microsoft Sonia Online (Natural) - English (United Kingdom)");
+    setVoices(chosenVoice);
     speechSynthesis.onvoiceschanged = () => {
-      setVoices(speechSynthesis.getVoices());
+      const chosenVoice = speechSynthesis.getVoices().filter(voice => voice.name === "Microsoft Sonia Online (Natural) - English (United Kingdom)");
+      setVoices(chosenVoice);
     };
+    
 
     const createGestureRecognizer = async () => {
       const vision = await FilesetResolver.forVisionTasks(
@@ -54,8 +57,7 @@ const Vivi = (props: ViviProps) => {
         },
         runningMode: "VIDEO",
       });
-      gestureRecognizerRef.current = recognizer;
-      demosSectionRef.current.classList.remove("invisible");
+      (gestureRecognizerRef as React.MutableRefObject<GestureRecognizer>).current = recognizer;
 
       enableCam()
     };
@@ -73,18 +75,14 @@ const Vivi = (props: ViviProps) => {
 
   useEffect(() => {
     speak(props.message)
-    if (voices.length > 108 && voices[108].name === "Microsoft Sonia Online (Natural) - English (United Kingdom)") {
-      props.setGreeted(() => true)
-    }
+    props.setGreeted(true)
   }, [voices])
 
   function speak(words: string) {
     speechSynthesis.cancel()
     const utterance = new SpeechSynthesisUtterance(words);
-    if (voices.length > 108 && voices[108].name === "Microsoft Sonia Online (Natural) - English (United Kingdom)") {
-      utterance.voice = voices[108];
-      speechSynthesis.speak(utterance);
-    }
+    utterance.voice = voices[0] || null;
+    speechSynthesis.speak(utterance);
   }
 
   const enableCam = async () => {
@@ -99,8 +97,10 @@ const Vivi = (props: ViviProps) => {
   
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      videoRef.current.srcObject = stream;
-      videoRef.current.addEventListener("loadeddata", predictWebcam);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+        videoRef.current.addEventListener("loadeddata", predictWebcam)
+      }
     } catch (error) {
       console.warn("getUserMedia() is not supported by your browser");
     }
@@ -114,19 +114,25 @@ const Vivi = (props: ViviProps) => {
     let lastVideoTime = -1;
     let results = undefined;
 
-    if (runningMode === "IMAGE") {
-      gestureRecognizer.setOptions({ runningMode: "VIDEO" });
+    if (runningMode !== "VIDEO") {
+      if (gestureRecognizer instanceof GestureRecognizer) {
+        gestureRecognizer.setOptions({ runningMode: "VIDEO" });
+      }
     }
 
-    let nowInMs = Date.now();
-    if (video.currentTime !== lastVideoTime) {
+    const nowInMs = Date.now();
+    if (video && video?.currentTime !== lastVideoTime) {
       lastVideoTime = video.currentTime;
-      results = await gestureRecognizer.recognizeForVideo(video, nowInMs)
-      if (results.gestures.length > 0) {
-        if (results.gestures[0][0].categoryName === "Thumb_Up") {
-          SpeechRecognition.stopListening();
-        } else if (results.gestures[0][0].categoryName === "Victory") {
-          SpeechRecognition.startListening({ continuous: true })
+      if (gestureRecognizer instanceof GestureRecognizer) {
+        results = await gestureRecognizer.recognizeForVideo(video, nowInMs);
+      }
+      if (results && results.gestures.length > 0) {
+        if (results.gestures[0] && results.gestures[0][0] !== undefined) {
+          if (results.gestures[0][0].categoryName === "Thumb_Up") {
+            SpeechRecognition.stopListening();
+          } else if (results.gestures[0][0].categoryName === "Victory") {
+            SpeechRecognition.startListening({ continuous: true })
+          }
         }
       }
     }
@@ -138,8 +144,8 @@ const Vivi = (props: ViviProps) => {
       <div>
         <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet" />
         <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js" />
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous" />
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossOrigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossOrigin="anonymous" />
 
         <div id="demos" className="invisible" ref={demosSectionRef}>
           <div id="liveView" className="videoView">

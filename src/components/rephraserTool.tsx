@@ -11,7 +11,7 @@ const RephraseTool = (): JSX.Element => {
   const debouncedText = useDebounce(text, 3000);
 
   useEffect(() => {
-    toxicity.load(0.9).then((loadedModel) => {
+    toxicity.load(0.9, ['identity_attack', 'insult', 'obscene', 'severe_toxicity', 'sexual_explicit', 'threat', 'toxicity']).then((loadedModel) => {
       setModel(loadedModel);
     });
   }, []);

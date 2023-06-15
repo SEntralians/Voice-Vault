@@ -12,13 +12,13 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     console.log(sessionData)
-    if (sessionData !== undefined) {
+    if (sessionData && sessionData.user.name) {
       let name = ``
-      for (let i = 0; i < sessionData?.user.name?.length; i++) {
-        if (i > 0 && sessionData?.user.name[i] === ` `) {
+      for (let i = 0; i < sessionData.user.name.length; i++) {
+        if (i > 0 && sessionData.user.name[i] === ` `) {
           break
         }
-        name += sessionData?.user.name[i]
+        name += sessionData.user.name[i]
       }
       setMessage(`Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`)
     }
