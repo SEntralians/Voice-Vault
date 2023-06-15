@@ -4,6 +4,7 @@ import {
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
 
+
 interface ViviProps {
   message: string
   setGreeted: () => void
@@ -20,7 +21,7 @@ const Vivi = (props: ViviProps) => {
   const [voices, setVoices] = useState([]);
 
   useEffect(() => {
-    const recognitionInitial = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    const recognitionInitial = new ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)();
     recognitionInitial.lang = "en-US";
     recognitionInitial.continuous = true;
     recognitionInitial.interimResults = true;
