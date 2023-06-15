@@ -8,24 +8,7 @@ import Navbar from "~/components/navbar/Navbar";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
-  const [greeted, setGreeted ] = useState(false)
-  const [message, setMessage] = useState('')
-  
-  useEffect(() => {
-    if (sessionData !== undefined) {
-      let firstName = ``
-      for (let i = 0; i < sessionData.user.name.length; i++) {
-        if (firstName !== `` && sessionData.user.name[i] === ` `) {
-          break
-        }
-        firstName += sessionData.user.name[i]
-      }
-  
-      setMessage(`Hey ${firstName}! How was your day? Did something interesting happen today? Tell me what's on your mind!`)
-    }
-
-  }, [sessionData])
-
+  console.log(sessionData);
   return (
     <>
       {sessionData ?
