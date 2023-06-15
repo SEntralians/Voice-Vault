@@ -1,35 +1,33 @@
+/* eslint-disable @next/next/no-sync-scripts */
+/* eslint-disable @typescript-eslint/await-thenable */
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { useEffect, useRef, useState } from "react";
-import {
-  GestureRecognizer,
-  FilesetResolver,
-} from "@mediapipe/tasks-vision";
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-
+import { GestureRecognizer, FilesetResolver } from "@mediapipe/tasks-vision";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 interface ViviProps {
-  message: string
-  greeted: boolean
-  setGreeted: (boolean: boolean) => void
+  message: string;
+  greeted: boolean;
+  setGreeted: (boolean: boolean) => void;
 }
 
 const Vivi = (props: ViviProps) => {
   const demosSectionRef = useRef(null);
-  const gestureRecognizerRef = useRef<GestureRecognizer>(null)
+  const gestureRecognizerRef = useRef<GestureRecognizer>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const gestureOutputRef = useRef(null);
   const [webcamRunning, setWebcamRunning] = useState(false);
-  const [voices, setVoices] = useState([] as SpeechSynthesisVoice[])
+  const [voices, setVoices] = useState([] as SpeechSynthesisVoice[]);
 
-  const {
-    transcript,
-    listening,
-    resetTranscript
-  } = useSpeechRecognition();
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   function handleListening() {
     if (!listening) {
       resetTranscript();
-      SpeechRecognition.startListening({ continuous: true })
+      SpeechRecognition.startListening({ continuous: true });
     } else {
       SpeechRecognition.stopListening();
     }
@@ -37,13 +35,24 @@ const Vivi = (props: ViviProps) => {
 
   useEffect(() => {
     // Get the voices that match the language code
-    const chosenVoice = speechSynthesis.getVoices().filter(voice => voice.name === "Microsoft Sonia Online (Natural) - English (United Kingdom)");
+    const chosenVoice = speechSynthesis
+      .getVoices()
+      .filter(
+        (voice) =>
+          voice.name ===
+          "Microsoft Sonia Online (Natural) - English (United Kingdom)"
+      );
     setVoices(chosenVoice);
     speechSynthesis.onvoiceschanged = () => {
-      const chosenVoice = speechSynthesis.getVoices().filter(voice => voice.name === "Microsoft Sonia Online (Natural) - English (United Kingdom)");
+      const chosenVoice = speechSynthesis
+        .getVoices()
+        .filter(
+          (voice) =>
+            voice.name ===
+            "Microsoft Sonia Online (Natural) - English (United Kingdom)"
+        );
       setVoices(chosenVoice);
     };
-    
 
     const createGestureRecognizer = async () => {
       const vision = await FilesetResolver.forVisionTasks(
@@ -57,9 +66,11 @@ const Vivi = (props: ViviProps) => {
         },
         runningMode: "VIDEO",
       });
-      (gestureRecognizerRef as React.MutableRefObject<GestureRecognizer>).current = recognizer;
+      (
+        gestureRecognizerRef as React.MutableRefObject<GestureRecognizer>
+      ).current = recognizer;
 
-      enableCam()
+      enableCam();
     };
 
     createGestureRecognizer();
@@ -67,19 +78,19 @@ const Vivi = (props: ViviProps) => {
 
   useEffect(() => {
     if (listening) {
-      speak("listening")
+      speak("listening");
     } else {
-      speak(`I understood ${transcript}`)
+      speak(`I understood ${transcript}`);
     }
-  }, [listening])
+  }, [listening]);
 
   useEffect(() => {
-    speak(props.message)
-    props.setGreeted(true)
-  }, [voices])
+    speak(props.message);
+    props.setGreeted(true);
+  }, [voices]);
 
   function speak(words: string) {
-    speechSynthesis.cancel()
+    speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(words);
     utterance.voice = voices[0] || null;
     speechSynthesis.speak(utterance);
@@ -90,16 +101,16 @@ const Vivi = (props: ViviProps) => {
       alert("Please wait for gestureRecognizer to load");
       return;
     }
-  
+
     setWebcamRunning((prevState) => !prevState);
-  
+
     const constraints = { video: true };
-  
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
       if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        videoRef.current.addEventListener("loadeddata", predictWebcam)
+        videoRef.current.srcObject = stream;
+        videoRef.current.addEventListener("loadeddata", predictWebcam);
       }
     } catch (error) {
       console.warn("getUserMedia() is not supported by your browser");
@@ -107,7 +118,7 @@ const Vivi = (props: ViviProps) => {
   };
 
   const predictWebcam = async () => {
-    console.log("watching you!!!")
+    console.log("watching you!!!");
     const gestureRecognizer = gestureRecognizerRef.current;
     const video = videoRef.current;
     const runningMode = "VIDEO";
@@ -131,32 +142,48 @@ const Vivi = (props: ViviProps) => {
           if (results.gestures[0][0].categoryName === "Thumb_Up") {
             SpeechRecognition.stopListening();
           } else if (results.gestures[0][0].categoryName === "Victory") {
-            SpeechRecognition.startListening({ continuous: true })
+            SpeechRecognition.startListening({ continuous: true });
           }
         }
       }
     }
     requestAnimationFrame(predictWebcam);
-  }
+  };
 
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 overflow-hidden">
+    <div className="fixed left-0 top-0 h-screen w-screen overflow-hidden">
       <div>
-        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet" />
+        <link
+          href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css"
+          rel="stylesheet"
+        />
         <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js" />
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossOrigin="anonymous" />
-        <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossOrigin="anonymous" />
+        <script
+          src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+          crossOrigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+          crossOrigin="anonymous"
+        />
 
         <div id="demos" className="invisible" ref={demosSectionRef}>
           <div id="liveView" className="videoView">
             <div style={{ position: "relative", visibility: "hidden" }}>
               <video id="webcam" autoPlay playsInline ref={videoRef} />
-              <p id="gesture_output" className="output" ref={gestureOutputRef} />
+              <p
+                id="gesture_output"
+                className="output"
+                ref={gestureOutputRef}
+              />
             </div>
           </div>
         </div>
       </div>
-      <button className="w-32 h-32 bg-white absolute bottom-10 right-10 rounded-full text-5xl p-0" onClick={() => handleListening()}>
+      <button
+        className="absolute bottom-10 right-10 h-32 w-32 rounded-full bg-white p-0 text-5xl"
+        onClick={() => handleListening()}
+      >
         V
       </button>
     </div>
