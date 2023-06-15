@@ -3,6 +3,7 @@ import {
   GestureRecognizer,
   FilesetResolver,
 } from "@mediapipe/tasks-vision";
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 
 interface ViviProps {
@@ -20,13 +21,22 @@ const Vivi = (props: ViviProps) => {
   const [recognition, setRecognition] = useState(null)
   const [voices, setVoices] = useState([]);
 
-  useEffect(() => {
-    const recognitionInitial = new ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)();
-    recognitionInitial.lang = "en-US";
-    recognitionInitial.continuous = true;
-    recognitionInitial.interimResults = true;
-    setRecognition(() => recognitionInitial)
+  const {
+    transcript,
+    listening,
+    resetTranscript
+  } = useSpeechRecognition();
 
+  function handleListening() {
+    if (!listening) {
+      resetTranscript();
+      SpeechRecognition.startListening({ continuous: true })
+    } else {
+      SpeechRecognition.stopListening();
+    }
+  }
+
+  useEffect(() => {
     setVoices(speechSynthesis.getVoices());
     speechSynthesis.onvoiceschanged = () => {
       setVoices(speechSynthesis.getVoices());
@@ -54,12 +64,12 @@ const Vivi = (props: ViviProps) => {
   }, []);
 
   useEffect(() => {
-    if (listen) {
+    if (listening) {
       speak("listening")
     } else {
-      speak("understood")
+      speak(`I understood ${transcript}`)
     }
-  }, [listen])
+  }, [listening])
 
   useEffect(() => {
     speak(props.message)
@@ -114,18 +124,14 @@ const Vivi = (props: ViviProps) => {
       results = await gestureRecognizer.recognizeForVideo(video, nowInMs)
       if (results.gestures.length > 0) {
         if (results.gestures[0][0].categoryName === "Thumb_Up") {
-          setListen(false)
+          SpeechRecognition.stopListening();
         } else if (results.gestures[0][0].categoryName === "Victory") {
-          setListen(true)
+          SpeechRecognition.startListening({ continuous: true })
         }
       }
     }
     requestAnimationFrame(predictWebcam);
-  };
-
-  useEffect(() => {
-    console.log(listen)
-  }, [listen])
+  }
 
   return (
     <div className="w-screen h-screen fixed top-0 left-0 overflow-hidden">
@@ -144,7 +150,7 @@ const Vivi = (props: ViviProps) => {
           </div>
         </div>
       </div>
-      <button className="w-32 h-32 bg-white absolute bottom-10 right-10 rounded-full text-5xl p-0" onClick={() => setListen(!listen)}>
+      <button className="w-32 h-32 bg-white absolute bottom-10 right-10 rounded-full text-5xl p-0" onClick={() => handleListening()}>
         V
       </button>
     </div>
