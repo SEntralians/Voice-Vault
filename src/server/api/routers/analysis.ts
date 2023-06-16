@@ -9,6 +9,18 @@ import { formatToDialogue } from "~/server/api/helpers";
 import { askChatGpt } from "~/server/api/services/openai";
 
 export const analysisRouter = createTRPCRouter({
+  getChatAnalysis: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ input, ctx }) => {
+      return ctx.prisma.chat.findUnique({
+        where: {
+          id: input.id,
+        },
+        select: {
+          analysis: true,
+        },
+      });
+    }),
   createAnalysis: protectedProcedure
     .input(
       z.object({
