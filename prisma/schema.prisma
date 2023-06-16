@@ -60,6 +60,7 @@ model User {
     createdChats  Chat[]       @relation("CreatorChats")
     joinedChats   Chat[]       @relation("JoinerChats")
     endRequests   EndRequest[]
+    messages      Message[]
 }
 
 model Journal {
@@ -91,6 +92,7 @@ model Chat {
     status               ChatStatus
     chatTurn             ChatTurn     @default(CREATOR)
     endRequest           EndRequest[]
+    analysis             String?      @db.Text
 }
 
 model EndRequest {
@@ -116,6 +118,8 @@ model Message {
     fallacyScore       Float?
     toxicityPrediction String?
     toxicityScore      Float?
+    user               User        @relation(fields: [userId], references: [id])
+    userId             String
 }
 
 model VerificationToken {

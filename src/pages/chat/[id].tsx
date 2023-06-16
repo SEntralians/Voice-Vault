@@ -489,7 +489,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
                     className={`mb-4 flex ${messagePattern.position}`}
                   >
                     <div
-                      className={`${messagePattern.color} max-w-2/3 rounded-lg px-3 py-2 text-white`}
+                      className={`${messagePattern.color} w-96 rounded-lg px-3 py-2 text-white`}
                     >
                       {chatMessage.text}
                     </div>

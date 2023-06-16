@@ -159,7 +159,7 @@ export const chatRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        message: z.string().min(1).max(200),
+        message: z.string().min(1).max(500),
       })
     )
     .mutation(async ({ input, ctx }) => {
@@ -201,6 +201,11 @@ export const chatRouter = createTRPCRouter({
             create: {
               text: input.message,
               type: role,
+              user: {
+                connect: {
+                  id: ctx.session.user.id,
+                },
+              },
             },
           },
         },

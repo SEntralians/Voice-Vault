@@ -5,6 +5,8 @@ import {
   getToxicityLevel,
 } from "../services/huggingface";
 import { TRPCError } from "@trpc/server";
+import { formatToDialogue } from "~/server/api/helpers";
+import { askChatGpt } from "~/server/api/services/openai";
 
 export const analysisRouter = createTRPCRouter({
   createAnalysis: protectedProcedure
@@ -27,8 +29,31 @@ export const analysisRouter = createTRPCRouter({
             },
           ],
         },
-        include: {
-          messages: true,
+        select: {
+          creator: {
+            select: {
+              name: true,
+            },
+          },
+          joiner: {
+            select: {
+              name: true,
+            },
+          },
+          messages: {
+            select: {
+              id: true,
+              text: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          creatorSelectedTopic: true,
+          joinerSelectedTopic: true,
+          description: true,
         },
       });
 
@@ -36,49 +61,76 @@ export const analysisRouter = createTRPCRouter({
         throw new Error("Chat not found");
       }
 
+      const formattedMessages = chat.messages.map((message) => ({
+        text: message.text,
+        user: message.user.name,
+      }));
+
+      const dialogue = formatToDialogue(formattedMessages);
+      const creatorName = chat.creator.name;
+      const joinerName = chat.joiner?.name;
+      const creatorSelectedTopic = chat.creatorSelectedTopic;
+      const joinerSelectedTopic = chat.joinerSelectedTopic;
+
+      const message = `I want you to analyze the debate conversation. The details are, ${
+        creatorName ?? "Person A"
+      } is for the ${creatorSelectedTopic ?? "Topic A"} and ${
+        joinerName ?? "Person B"
+      } is for ${joinerSelectedTopic ?? "Topic B"} where the details are ${
+        chat.description
+      }. The following dialogue is that ${dialogue}.`;
+
+      const analysisPrompt =
+        message +
+        "Can you please give me detailed information for each debater regarding their relevance to the topic, factual information, organization, clarity";
+
       try {
-        const [classification, toxicity] = await Promise.all([
+        const [classification, toxicity, analsyis] = await Promise.all([
           getFallacyClassification({
             inputs: chat.messages.map((message) => message.text),
           }),
           getToxicityLevel({
             inputs: chat.messages.map((message) => message.text),
           }),
+          askChatGpt(analysisPrompt),
         ]);
-
-        console.log(classification, toxicity);
 
         if (!classification || !toxicity) {
           throw new Error("Something went wrong with the analysis");
         }
 
-        await ctx.prisma.$transaction(
-          classification
-            .map((c, idx) =>
-              ctx.prisma.message.update({
-                where: {
-                  id: chat.messages[idx]?.id,
-                },
-                data: {
-                  fallacyPrediction: c?.label,
-                  fallacyScore: c?.score,
-                },
-              })
-            )
-            .concat(
-              toxicity.map((t, idx) =>
-                ctx.prisma.message.update({
-                  where: {
-                    id: chat.messages[idx]?.id,
-                  },
-                  data: {
-                    toxicityPrediction: t?.label,
-                    toxicityScore: t?.score,
-                  },
-                })
-              )
-            )
-        );
+        await ctx.prisma.$transaction([
+          ...classification.map((c, idx) =>
+            ctx.prisma.message.update({
+              where: {
+                id: chat.messages[idx]?.id,
+              },
+              data: {
+                fallacyPrediction: c?.label,
+                fallacyScore: c?.score,
+              },
+            })
+          ),
+          ...toxicity.map((t, idx) =>
+            ctx.prisma.message.update({
+              where: {
+                id: chat.messages[idx]?.id,
+              },
+              data: {
+                toxicityPrediction: t?.label,
+                toxicityScore: t?.score,
+              },
+            })
+          ),
+          ctx.prisma.chat.update({
+            where: {
+              id: input.chatId,
+            },
+            data: {
+              analysis: analsyis,
+            },
+          }),
+        ]);
       } catch (e) {
         console.error(e);
         throw new TRPCError({
