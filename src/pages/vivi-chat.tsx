@@ -16,6 +16,8 @@ const ChatGPT: React.FC = () => {
   >([]);
   const [inputText, setInputText] = useState("");
 
+  console.log(ChatCompletionRequestMessageRoleEnum)
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(() => e.target.value);
     console.log(e.target.value);
