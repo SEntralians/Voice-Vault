@@ -7,7 +7,7 @@ interface RephraseToolProps {
 }
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
