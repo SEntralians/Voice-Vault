@@ -44,7 +44,7 @@ const RephraseTool = (): JSX.Element => {
 
   return (
     <div className="container mx-auto w-full p-4">
-      <div className="relative inline-block text-left">
+      <div className="relative inline-block text-left w-full">
         <input
           type="text"
           value={text}
