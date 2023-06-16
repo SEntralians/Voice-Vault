@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Configuration, OpenAIApi } from "openai";
+import { Configuration, OpenAIApi, ChatCompletionRequestMessageRoleEnum} from "openai";
+
 
 const configuration = new Configuration({
   apiKey: "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",
@@ -7,20 +8,18 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 const ChatGPT: React.FC = () => {
-  const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
+  const [messages, setMessages] = useState<Array<{ role: ChatCompletionRequestMessageRoleEnum; content: string }>>([]);
   const [inputText, setInputText] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(() => e.target.value);
     console.log(e.target.value)
-  };
+  }
 
   const handleSendMessage = async () => {
-    if (inputText.trim() === "") return;
-
     const newMessages = [
       ...messages,
-      { role: "user", content: inputText },
+      { role: ChatCompletionRequestMessageRoleEnum.User, content: inputText },
     ];
     setMessages(() => newMessages);
     setInputText("");
@@ -28,19 +27,23 @@ const ChatGPT: React.FC = () => {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: "Instructions" },
-        ...newMessages,
+        { role: ChatCompletionRequestMessageRoleEnum.System, content: "Instructions" },
+        ...newMessages
       ],
     });
 
     console.log(completion)
 
-    const botReply = completion.data.choices[0].message.content;
-    const updatedMessages = [
-      ...newMessages,
-      { role: "assistant", content: botReply },
-    ];
-    setMessages(updatedMessages);
+    const botReply = completion?.data?.choices[0]?.message?.content;
+
+    // Check if botReply is defined before adding it to the messages array
+    if (botReply) {
+      const updatedMessages = [
+        ...newMessages,
+        { role: ChatCompletionRequestMessageRoleEnum.Assistant, content: botReply },
+      ];
+      setMessages(updatedMessages);
+    }
   };
 
   return (
