@@ -27,6 +27,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     COHERE_API_KEY: z.string(),
     HUGGINGFACE_API_KEY: z.string(),
+    OPENAI_KEY: z.string(),
   },
 
   /**
@@ -53,6 +54,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     COHERE_API_KEY: process.env.COHERE_API_KEY,
     HUGGINGFACE_API_KEY: process.env.HUGGINGFACE_API_KEY,
+    OPENAI_KEY: process.env.OPENAI_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

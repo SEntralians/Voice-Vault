@@ -37,14 +37,10 @@ export const analysisRouter = createTRPCRouter({
       }
 
       try {
-        console.log(chat.messages.map((message) => message.text));
         const [classification, toxicity] = await Promise.all([
-          getFallacyClassification(
-            {
-              inputs: chat.messages.map((message) => message.text),
-            },
-            0.1
-          ),
+          getFallacyClassification({
+            inputs: chat.messages.map((message) => message.text),
+          }),
           getToxicityLevel({
             inputs: chat.messages.map((message) => message.text),
           }),

@@ -24,13 +24,18 @@ export const getFallacyClassification = async (
     );
     const result = (await response.json()) as Result;
 
-    return result
-      .map((res) => res.filter((r) => r.score > threshold))
-      .map((fallacy, idx) => ({
-        text: data.inputs[idx],
-        label: fallacy[0]?.label ?? "neutral",
-        score: fallacy[0]?.score ?? 0,
-      }));
+    try {
+      return result
+        .map((res) => res.filter((r) => r.score > threshold))
+        .map((fallacy, idx) => ({
+          text: data.inputs[idx],
+          label: fallacy[0]?.label ?? "neutral",
+          score: fallacy[0]?.score ?? 0,
+        }));
+    } catch (e) {
+      console.log(e);
+      return undefined;
+    }
   } catch (e) {
     console.log(e);
     return undefined;
@@ -49,13 +54,18 @@ export const getToxicityLevel = async (data: InputData, threshold = 0.5) => {
     );
     const result = (await response.json()) as Result;
 
-    return result
-      .map((res) => res.filter((r) => r.score > threshold))
-      .map((fallacy, idx) => ({
-        text: data.inputs[idx],
-        label: fallacy[0]?.label ?? "neutral",
-        score: fallacy[0]?.score ?? 0,
-      }));
+    try {
+      return result
+        .map((res) => res.filter((r) => r.score > threshold))
+        .map((fallacy, idx) => ({
+          text: data.inputs[idx],
+          label: fallacy[0]?.label ?? "neutral",
+          score: fallacy[0]?.score ?? 0,
+        }));
+    } catch (e) {
+      console.log(e);
+      return undefined;
+    }
   } catch (e) {
     console.log(e);
     return undefined;
