@@ -39,15 +39,15 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <div className="absolute top-0 h-screen w-screen bg-background-100">
+      <div className="bg-background-100">
         <Navbar currentPage="home" />
         <div className="px-20 py-10">
-          <h1 className="text-3xl font-bold text-white">
+          <h1 className="text-3xl font-bold text-black">
             What&apos;s on your mind, Hans?
           </h1>
 
           <div className="mt-10 grid grid-cols-12 gap-4">
-            <div className="col-span-4 flex flex-col justify-center gap-20 text-white">
+            <div className="col-span-4 flex flex-col justify-center gap-20 text-black">
               <PencilIcon className="w-3h-36 h-36" />
               <div className="flex flex-col gap-5">
                 <div>Your takes on:</div>
@@ -60,7 +60,7 @@ const Home: NextPage = () => {
                 </ul>
               </div>
             </div>
-            <div className="col-span-8 flex flex-col gap-10 text-white">
+            <div className="col-span-8 flex flex-col gap-10 text-black">
               <div className="flex flex-row gap-5">
                 <CalendarDaysIcon className="h-10 w-10" />
                 <h3 className="my-auto">
