@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
+import { api } from "~/utils/api";
+import toast, { Toaster } from "react-hot-toast";
+import { withAuth } from "~/middlewares";
+
+const PADDING = 500;
 
 interface StickyNote {
   id: string;
@@ -16,19 +21,30 @@ const StickyNotes: React.FC = () => {
   const [stickyNotes, setStickyNotes] = useState<StickyNote[]>([]);
   const [newNoteText, setNewNoteText] = useState("");
 
+  const { data: notes, refetch: refetchNotes } =
+    api.note.getAllNotes.useQuery();
+  const { mutate: addNote } = api.note.createNote.useMutation({
+    onSuccess: async () => {
+      await refetchNotes();
+      setNewNoteText("");
+      toast.success("Note added!");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handleNoteChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewNoteText(event.target.value);
   };
 
   const handleNoteAdd = () => {
-    const newNote: StickyNote = {
-      id: Date.now().toString(),
-      text: newNoteText,
-      position: { x: 0, y: 0 },
-    };
+    if (newNoteText === "") {
+      toast.error("Note cannot be empty!");
+      return;
+    }
 
-    setStickyNotes([...stickyNotes, newNote]);
-    setNewNoteText("");
+    addNote({ content: newNoteText });
   };
 
   const handleNoteDrag = (
@@ -40,8 +56,30 @@ const StickyNotes: React.FC = () => {
     setStickyNotes(updatedStickyNotes);
   };
 
+  useEffect(() => {
+    if (notes) {
+      setStickyNotes(
+        notes.map((note) => ({
+          id: note.id,
+          position: {
+            x: Math.floor(Math.random() * (window.innerWidth - PADDING)),
+            y: Math.floor(Math.random() * (window.innerHeight - PADDING)),
+          },
+          text: note.content,
+        }))
+      );
+    }
+  }, [notes]);
+
+  if (!notes) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <h1 className="mb-4 text-center text-3xl font-bold text-white">
+        Freedom Wall
+      </h1>
       <div className="mb-4">
         <textarea
           className="w-full rounded border p-2"
@@ -50,7 +88,7 @@ const StickyNotes: React.FC = () => {
           maxLength={700}
         />
         <button
-          className="mt-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
+          className="mt-2 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
           onClick={handleNoteAdd}
         >
           Add Note
@@ -71,8 +109,9 @@ const StickyNotes: React.FC = () => {
           </Draggable>
         ))}
       </div>
+      <Toaster />
     </div>
   );
 };
 
-export default StickyNotes;
+export default withAuth(StickyNotes);

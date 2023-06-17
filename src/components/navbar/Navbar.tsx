@@ -42,81 +42,93 @@ const Navbar: FC<Props> = ({ currentPage }) => {
   };
 
   return (
-    <nav className="bg-primary-100 h-20 flex items-center">
-      <div className="mx-4 px-4 w-full flex justify-between items-center">
-        <div className="flex items-center inset-x-0 z-20">
-          <Image className=" bg-background-100 rounded-full" src="images/logo_transparent.svg" alt={""} width={66} height={66}/>
-          <Link href="/">
-          <h1 className="text-white text-3xl font-bold ml-4">VoiceVault</h1></Link>
+    <nav className="flex h-20 items-center bg-primary-100">
+      <div className="mx-4 flex w-full items-center justify-between px-4">
+        <div className="flex cursor-pointer items-center" onClick={goToRoot}>
+          <Image
+            className="h-16 w-16 rounded-full bg-background-100"
+            src="/images/logo_transparent.svg"
+            alt="VoiceVault Logo"
+            height={64}
+            width={64}
+          />
+          <h1 className="ml-4 text-3xl font-bold text-white">VoiceVault</h1>
         </div>
 
-             <div className="mx-6 flex flex-col lg:mx-8 text-white text-xl font-serif lg:flex-row absolute inset-x-0 z-20  duration-300 ease-in-out dark:bg-gray-800 lg:relative lg:top-0 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
-               <a
-                  href="home"
-                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-                    currentPage === "home" ? "underline" : ""
-                  }`}
-                >
-                  My Mental Space
-                </a>
-                <a
-                  href="discussion"
-                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-                    currentPage === "discussion" ? "underline" : ""
-                  }`}
-                >
-                  Discussions
-                </a>
-                <a
-                  href="challenges"
-                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-                    currentPage === "challenges" ? "underline" : ""
-                  }`}
-                >
-                  Challenges
-                </a>
+        <div className="absolute inset-x-0 z-20 mx-6 flex flex-col font-serif text-xl text-white duration-300 ease-in-out  dark:bg-gray-800 lg:relative lg:top-0 lg:mx-8 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:flex-row lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
+          <a
+            href="home"
+            className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
+              currentPage === "home" ? "underline" : ""
+            }`}
+          >
+            My Mental Space
+          </a>
+          <a
+            href="discussion"
+            className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
+              currentPage === "discussion" ? "underline" : ""
+            }`}
+          >
+            Discussions
+          </a>
+          <a
+            href="challenges"
+            className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
+              currentPage === "challenges" ? "underline" : ""
+            }`}
+          >
+            Challenges
+          </a>
 
-                <div className="mt-4 ml-96 first-letter:flex items-center lg:mt-0">
-                <button
-                  className="mx-4 hidden transform text-gray-600 transition-colors duration-300 hover:text-gray-700 focus:text-gray-700 focus:outline-none dark:text-gray-200 dark:hover:text-gray-400 dark:focus:text-gray-400 lg:block"
-                  aria-label="show notifications"
-                >
-                  {/* Add your notification icon here */}
-                </button>
+          <div className="ml-96 mt-4 items-center first-letter:flex lg:mt-0">
+            <button
+              className="mx-4 hidden transform text-gray-600 transition-colors duration-300 hover:text-gray-700 focus:text-gray-700 focus:outline-none dark:text-gray-200 dark:hover:text-gray-400 dark:focus:text-gray-400 lg:block"
+              aria-label="show notifications"
+            >
+              {/* Add your notification icon here */}
+            </button>
 
-                <button
-                  type="button"
-                  className="flex items-center focus:outline-none"
-                  aria-label="toggle profile dropdown"
-                  onClick={handleDropdownToggle}
-                >
-                  <img className="h-16 w-16 overflow-hidden bg-background-100 rounded-full" src={userImage} alt="images/logo_opaque.svg"></img>
-                </button>
+            <button
+              type="button"
+              className="flex items-center focus:outline-none"
+              aria-label="toggle profile dropdown"
+              onClick={handleDropdownToggle}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="h-16 w-16 overflow-hidden rounded-full bg-background-100"
+                src={userImage}
+                alt="User Image"
+                height={64}
+                width={64}
+              />
+            </button>
 
-                {showDropdown && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute right-0 mt-1 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+            {showDropdown && (
+              <div
+                ref={dropdownRef}
+                className="absolute right-0 mt-1 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              >
+                <div
+                  className="py-1"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="options-menu"
+                >
+                  <button
+                    className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    role="menuitem"
+                    onClick={() => void signOut()}
                   >
-                    <div
-                      className="py-1"
-                      role="menu"
-                      aria-orientation="vertical"
-                      aria-labelledby="options-menu"
-                    >
-                      <button
-                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                        role="menuitem"
-                        onClick={() => void signOut()}
-                      >
-                        Logout
-                      </button>
-                    </div>
-                  </div>
-                )}
-               </div>
+                    Logout
+                  </button>
+                </div>
               </div>
+            )}
+          </div>
         </div>
+      </div>
     </nav>
   );
 };

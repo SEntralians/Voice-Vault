@@ -12,6 +12,10 @@ interface ViviProps {
   message: string;
   greeted: boolean;
   setGreeted: (boolean: boolean) => void;
+  journalWrite: boolean;
+  setJournalWrite: (boolean: boolean) => void;
+  journalText: string;
+  setJournalText: (string: string) => void;
 }
 
 const Vivi = (props: ViviProps) => {
@@ -25,11 +29,17 @@ const Vivi = (props: ViviProps) => {
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
   function handleListening() {
-    if (!listening) {
+    if (listening) {
+      SpeechRecognition.stopListening();
+      if (props.journalWrite) {
+        props.setJournalWrite(false);
+      }
+    } else {
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
-    } else {
-      SpeechRecognition.stopListening();
+      if (props.journalWrite === false) {
+        props.setJournalWrite(true);
+      }
     }
   }
 
@@ -80,14 +90,26 @@ const Vivi = (props: ViviProps) => {
     if (listening) {
       speak("listening");
     } else {
-      speak(`I understood ${transcript}`);
+      if (props.setJournalWrite === null) {
+        speak(`I understood ${transcript}`);
+      } else {
+        speak(`Interesting`);
+      }
     }
   }, [listening]);
 
   useEffect(() => {
-    speak(props.message);
+    if (props.greeted === false) {
+      speak(props.message);
+    }
     props.setGreeted(true);
   }, [voices]);
+
+  useEffect(() => {
+    if (props.journalWrite) {
+      props.setJournalText(transcript);
+    }
+  }, [transcript]);
 
   function speak(words: string) {
     speechSynthesis.cancel();
@@ -118,7 +140,6 @@ const Vivi = (props: ViviProps) => {
   };
 
   const predictWebcam = async () => {
-    console.log("watching you!!!");
     const gestureRecognizer = gestureRecognizerRef.current;
     const video = videoRef.current;
     const runningMode = "VIDEO";
@@ -141,6 +162,16 @@ const Vivi = (props: ViviProps) => {
         if (results.gestures[0] && results.gestures[0][0] !== undefined) {
           if (results.gestures[0][0].categoryName === "Thumb_Up") {
             SpeechRecognition.stopListening();
+            if (props.journalWrite !== null) {
+              props.setJournalWrite(false);
+            }
+          } else if (
+            results.gestures[0][0].categoryName === "Open_Palm" &&
+            props.journalWrite !== null
+          ) {
+            resetTranscript();
+            SpeechRecognition.startListening({ continuous: true });
+            props.setJournalWrite(true);
           } else if (results.gestures[0][0].categoryName === "Victory") {
             SpeechRecognition.startListening({ continuous: true });
           }

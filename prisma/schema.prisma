@@ -61,6 +61,7 @@ model User {
     joinedChats   Chat[]       @relation("JoinerChats")
     endRequests   EndRequest[]
     messages      Message[]
+    aiChat        AIChat?
 }
 
 model Journal {
@@ -93,6 +94,26 @@ model Chat {
     chatTurn             ChatTurn     @default(CREATOR)
     endRequest           EndRequest[]
     analysis             String?      @db.Text
+}
+
+model AIChat {
+    id                String         @id @default(cuid())
+    createdAt         DateTime       @default(now())
+    updatedAt         DateTime       @updatedAt
+    systemInformation String         @db.Text
+    conversations     Conversation[]
+    user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId            String         @unique
+}
+
+model Conversation {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    userInput String   @db.Text
+    aiReply   String   @db.Text
+    aiChat    AIChat   @relation(fields: [aiChatId], references: [id])
+    aiChatId  String
 }
 
 model EndRequest {
@@ -128,6 +149,13 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Note {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    content   String   @db.Text
 }
 
 enum ChatStatus {
