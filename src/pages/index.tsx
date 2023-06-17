@@ -7,6 +7,7 @@ import Navbar from "~/components/navbar/Navbar";
 import { Dialog, Transition } from "@headlessui/react";
 import { Loader } from "~/components/loaders";
 import toast, { Toaster } from "react-hot-toast";
+import Image from 'next/image'
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -170,15 +171,51 @@ export default Home;
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
+  const [ isRolling, setIsRolling ] = useState(false);
+
+  const handleLogin = async () => {
+    setIsRolling(true);
+    sessionData ? () => void signOut() : () => void signIn()
+    await signIn("google"); // Replace with your desired NextAuth provider
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <button
-        className="rounded-full bg-black/10 px-10 py-3 font-semibold text-black no-underline transition hover:bg-black/20"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
+    <div className="bg-secondary-100 h-screen w-screen flex items-center justify-center top-0 left-0 absolute">
+      <div className={`flex justify-center mb-6 transform absolute ${
+          isRolling ? "-translate-x-full -rotate-180" : ""
+        } transition-transform duration-1000`}>
+          <Image
+            src="images/logo_opaque.svg" // Replace with the path to your logo image
+            alt="Logo"
+            className="rounded-full"
+            width={600}
+            height={600}
+          />
+      </div>
+
+      <div
+        className={`w-96 max-w-96 bg-white bg-opacity-80 p-8 mt-96 rounded-lg shadow-md z-50 items-center justify-center`}
       >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
+        <h2 className="text-5xl font-bold mb-4 mx-auto items-center justify-center text-center text-primary-200">VoiceVault</h2>
+        <div className="flex justify-center">
+          <button
+            onClick={handleLogin}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none"
+          >
+            {sessionData ? "Sign out" : "Sign in with Google"}
+          </button>
+        </div>
+      </div>
     </div>
   );
+  // return (
+  //   <div className="flex flex-col items-center justify-center gap-4">
+  //     <button
+  //       className="rounded-full bg-black/10 px-10 py-3 font-semibold text-black no-underline transition hover:bg-black/20"
+  //       onClick={sessionData ? () => void signOut() : () => void signIn()}
+  //     >
+  //       {sessionData ? "Sign out" : "Sign in"}
+  //     </button>
+  //   </div>
+  // );
 };
