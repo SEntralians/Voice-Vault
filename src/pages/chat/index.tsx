@@ -4,6 +4,7 @@ import { withAuth } from "~/middlewares";
 import { api } from "~/utils/api";
 import toast, { Toaster } from "react-hot-toast";
 import type { NextPage } from "next";
+import Navbar from "~/components/navbar/Navbar";
 
 const AIChatPage: NextPage = () => {
   const utils = api.useContext();
@@ -38,71 +39,78 @@ const AIChatPage: NextPage = () => {
 
   return (
     <>
-      <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
-        <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
-          <div className="flex items-center bg-primary-200 px-10 py-5">
-            <div className="mx-4 flex-1 text-center text-lg font-medium text-white">
-              Therapy Chat Bot
-            </div>
-          </div>
+      <body className="top-0 bg-background-100">
+        <Navbar currentPage="chat" />
+        <div className="flex h-screen flex-row items-center justify-center gap-5">
+          <div className="flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-white shadow-lg">
+            <div className="flex items-center bg-background-100 px-10 py-5"></div>
 
-          <div className="flex flex-grow flex-col overflow-y-auto p-4">
-            {conversations.map((conversation) => {
-              return (
-                <>
-                  <div key={conversation.id} className="mb-4 flex justify-end">
-                    <div className="w-96 rounded-lg bg-blue-500 px-3 py-2 text-white">
-                      {conversation.userInput}
-                    </div>
-                  </div>
-                  <div
-                    key={conversation.id}
-                    className="mb-4 flex justify-start"
-                  >
-                    <div className="w-96 rounded-lg bg-gray-700 px-3 py-2 text-white">
-                      {conversation.aiReply}
-                    </div>
-                  </div>
-                </>
-              );
-            })}
-            {temporaryMessage && (
-              <div className="mb-4 flex justify-end">
-                <div className="w-96 rounded-lg bg-blue-500 px-3 py-2 text-white">
-                  {temporaryMessage}
-                </div>
-              </div>
-            )}
-            {isTyping && (
+            <div className="flex flex-grow flex-col overflow-y-auto bg-background-100 p-4">
               <div className="mb-4 flex justify-start">
-                <div className="rounded-lg bg-gray-700 px-3 py-2 text-white">
-                  <div className="animate-pulse">Vivi is typing...</div>
+                <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 font-semibold text-gray-800">
+                  Hey Hans! How was your day? Did something interesting happen today? Tell me!
                 </div>
               </div>
-            )}
-          </div>
+              {conversations.map((conversation) => {
+                return (
+                  <>
+                    <div
+                      key={conversation.id}
+                      className="mb-4 flex justify-end"
+                    >
+                      <div className="text-primary-800 w-full max-w-lg rounded-lg  bg-green-500 px-6 py-4">
+                        {conversation.userInput}
+                      </div>
+                    </div>
+                    <div
+                      key={conversation.id}
+                      className="mb-4 flex justify-start"
+                    >
+                      <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 text-gray-800">
+                        {conversation.aiReply}
+                      </div>
+                    </div>
+                  </>
+                );
+              })}
+              {temporaryMessage && (
+                <div className="mb-4 flex justify-end">
+                  <div className="text-primary-800 w-full max-w-lg rounded-lg bg-green-500 px-6 py-4">
+                    {temporaryMessage}
+                  </div>
+                </div>
+              )}
+              {isTyping && (
+                <div className="mb-4 flex justify-start">
+                  <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 text-gray-800">
+                    <div className="animate-pulse">Vivi is typing...</div>
+                  </div>
+                </div>
+              )}
+            </div>
 
-          <div className="p-4">
-            <div className="flex items-center">
-              <input
-                type="text"
-                value={message}
-                className="flex-grow rounded-md bg-gray-800 px-3 py-2 text-white outline-none focus:ring-1 focus:ring-blue-500"
-                onChange={(e) => setMessage(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white disabled:opacity-50"
-                disabled={message.length === 0}
-                onClick={handleUserInput}
-              >
-                <PaperAirplaneIcon className="h-5 w-5" />
-              </button>
+            <div className="bg-background-100 p-4">
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={message}
+                  className="focus:ring-primary-500 flex-grow rounded-md bg-gray-200 px-3 py-2 text-gray-800 outline-none focus:ring-1"
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white disabled:opacity-50"
+                  disabled={message.length === 0}
+                  onClick={handleUserInput}
+                >
+                  <PaperAirplaneIcon className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <Toaster />
+        <Toaster />
+      </body>
     </>
   );
 };
