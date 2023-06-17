@@ -9,7 +9,6 @@ import { Modal, MiniModal } from "~/components/modals";
 import { match } from "ts-pattern";
 
 import type { FC } from "react";
-import type { RouterOutputs } from "~/utils/api";
 import type { User, MessageType, Message } from "@prisma/client";
 import type { NextPage } from "next";
 
