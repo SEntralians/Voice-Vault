@@ -7,16 +7,24 @@ import type { NextPage } from "next";
 
 const AIChatPage: NextPage = () => {
   const utils = api.useContext();
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [temporaryMessage, setTemporaryMessage] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
 
   const { data: conversations } = api.aiChat.getAiConversations.useQuery();
   const { mutate: postMessage } = api.aiChat.chatAi.useMutation({
     onSuccess: () => {
-      setMessage("");
+      setIsTyping(false);
+      setTemporaryMessage(null);
       void utils.aiChat.getAiConversations.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
+    },
+    onMutate: (newMessage) => {
+      setIsTyping(true);
+      setMessage("");
+      setTemporaryMessage(newMessage.userInput);
     },
   });
 
@@ -58,6 +66,20 @@ const AIChatPage: NextPage = () => {
                 </>
               );
             })}
+            {temporaryMessage && (
+              <div className="mb-4 flex justify-end">
+                <div className="w-96 rounded-lg bg-blue-500 px-3 py-2 text-white">
+                  {temporaryMessage}
+                </div>
+              </div>
+            )}
+            {isTyping && (
+              <div className="mb-4 flex justify-start">
+                <div className="rounded-lg bg-gray-700 px-3 py-2 text-white">
+                  <div className="animate-pulse">Vivi is typing...</div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="p-4">
