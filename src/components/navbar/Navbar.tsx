@@ -42,7 +42,7 @@ const Navbar: FC<Props> = ({ currentPage, userImage }) => {
   return (
     <nav className="flex h-20 items-center bg-primary-100">
       <div className="mx-4 flex w-full items-center justify-between px-4">
-        <div className="flex items-center">
+        <div className="flex cursor-pointer items-center" onClick={goToRoot}>
           <Image
             className="h-16 w-16 rounded-full bg-background-100"
             src="/images/logo_transparent.svg"
@@ -93,10 +93,14 @@ const Navbar: FC<Props> = ({ currentPage, userImage }) => {
               aria-label="toggle profile dropdown"
               onClick={handleDropdownToggle}
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="h-16 w-16 overflow-hidden rounded-full bg-background-100"
                 src={userImage}
-              ></img>
+                alt="User Image"
+                height={64}
+                width={64}
+              />
             </button>
 
             {showDropdown && (

@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import Vivi from "~/components/Vivi";
 import Navbar from "~/components/navbar/Navbar";
 import { Dialog, Transition } from "@headlessui/react";
+import { Loader } from "~/components/loaders";
 import toast, { Toaster } from "react-hot-toast";
 
 const Home: NextPage = () => {
@@ -17,15 +18,16 @@ const Home: NextPage = () => {
   const [greeted, setGreeted] = useState(false);
   const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
-  const { mutate: addJournal } = api.journal.createJournal.useMutation({
-    onSuccess: () => {
-      setIsModalOpen(false);
-      toast.success("Journal saved!");
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { mutate: addJournal, isLoading: isAddingJournal } =
+    api.journal.createJournal.useMutation({
+      onSuccess: () => {
+        setIsModalOpen(false);
+        toast.success("Journal saved!");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
 
   const handleCreateJournal = () => {
     if (!title || !journalText) {
@@ -99,7 +101,12 @@ const Home: NextPage = () => {
 
                   <div className="my-4">
                     <h1 className="text-lg font-extrabold">Content</h1>
-                    <p>{journalText}</p>
+                    <textarea
+                      className="h-52 w-full rounded border-2 border-gray-200 p-2"
+                      placeholder="Content"
+                      value={journalText}
+                      onChange={(e) => setJournalText(e.target.value)}
+                    />
                   </div>
 
                   <div className="flex justify-end">
@@ -110,9 +117,10 @@ const Home: NextPage = () => {
                       Cancel
                     </button>
                     <button
-                      className="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                      className="flex flex-row rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
                       onClick={handleCreateJournal}
                     >
+                      {isAddingJournal && <Loader />}
                       Save
                     </button>
                   </div>
