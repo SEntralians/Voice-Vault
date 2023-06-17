@@ -5,9 +5,10 @@ import { useRouter } from "next/router";
 
 interface Props {
   currentPage: string;
+  userImage: string;
 }
 
-const Navbar: FC<Props> = ({ currentPage }) => {
+const Navbar: FC<Props> = ({ currentPage, userImage }) => {
   const router = useRouter();
 
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
@@ -38,24 +39,17 @@ const Navbar: FC<Props> = ({ currentPage }) => {
   };
 
   return (
-    <>
-      <nav className="relative bg-white shadow  dark:bg-gray-800">
-        <div className="container mx-auto px-6 py-4">
-          <div className="lg:flex lg:items-center lg:justify-between">
-            <div className="flex items-center justify-between">
-              <h3
-                className="cursor-pointer text-3xl font-bold text-white"
-                onClick={goToRoot}
-              >
-                Voice Vault
-              </h3>
-            </div>
+    <nav className="bg-primary-100 h-20 flex items-center">
+      <div className="mx-4 px-4 w-full flex justify-between items-center">
+        <div className="flex items-center">
+          <img className="h-16 w-16 bg-background-100 rounded-full" src="images/logo_transparent.svg"></img>
+          <h1 className="text-white text-3xl font-bold ml-4">VoiceVault</h1>
+        </div>
 
-            <div className="absolute inset-x-0 z-20 w-full bg-white px-6 py-4 transition-all duration-300 ease-in-out dark:bg-gray-800 lg:relative lg:top-0 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
-              <div className="-mx-6 flex flex-col lg:mx-8 lg:flex-row lg:items-center">
-                <a
+             <div className="mx-6 flex flex-col lg:mx-8 text-white text-xl font-serif lg:flex-row absolute inset-x-0 z-20  duration-300 ease-in-out dark:bg-gray-800 lg:relative lg:top-0 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
+               <a
                   href="home"
-                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 text-gray-700 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
+                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
                     currentPage === "home" ? "underline" : ""
                   }`}
                 >
@@ -63,7 +57,7 @@ const Navbar: FC<Props> = ({ currentPage }) => {
                 </a>
                 <a
                   href="discussion"
-                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 text-gray-700 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
+                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
                     currentPage === "discussion" ? "underline" : ""
                   }`}
                 >
@@ -71,15 +65,14 @@ const Navbar: FC<Props> = ({ currentPage }) => {
                 </a>
                 <a
                   href="challenges"
-                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 text-gray-700 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
+                  className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
                     currentPage === "challenges" ? "underline" : ""
                   }`}
                 >
                   Challenges
                 </a>
-              </div>
 
-              <div className="mt-4 flex items-center lg:mt-0">
+                <div className="mt-4 ml-96 first-letter:flex items-center lg:mt-0">
                 <button
                   className="mx-4 hidden transform text-gray-600 transition-colors duration-300 hover:text-gray-700 focus:text-gray-700 focus:outline-none dark:text-gray-200 dark:hover:text-gray-400 dark:focus:text-gray-400 lg:block"
                   aria-label="show notifications"
@@ -93,16 +86,13 @@ const Navbar: FC<Props> = ({ currentPage }) => {
                   aria-label="toggle profile dropdown"
                   onClick={handleDropdownToggle}
                 >
-                  <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-gray-400"></div>
-                  <h3 className="mx-2 text-gray-700 dark:text-gray-200 lg:hidden">
-                    Khatab wedaa
-                  </h3>
+                  <img className="h-16 w-16 overflow-hidden bg-background-100 rounded-full" src={userImage}></img>
                 </button>
 
                 {showDropdown && (
                   <div
                     ref={dropdownRef}
-                    className="absolute right-0 mt-20 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    className="absolute right-0 mt-1 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                   >
                     <div
                       className="py-1"
@@ -120,12 +110,10 @@ const Navbar: FC<Props> = ({ currentPage }) => {
                     </div>
                   </div>
                 )}
+               </div>
               </div>
-            </div>
-          </div>
         </div>
-      </nav>
-    </>
+    </nav>
   );
 };
 

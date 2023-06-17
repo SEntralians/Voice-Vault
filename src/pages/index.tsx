@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import Vivi from "~/components/Vivi";
 import Navbar from "~/components/navbar/Navbar";
+import { userAgent } from "next/server";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -11,6 +12,7 @@ const Home: NextPage = () => {
   const [journalText, setJournalText] = useState('')
   const [journalWrite, setJounralWrite] = useState(false)
   const [greeted, setGreeted ] = useState(false)
+  const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
   function saveJournal(textEntry: string) : void {
     // create new journal entry and save to database
@@ -19,13 +21,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     console.log(sessionData)
     if (sessionData && sessionData.user.name) {
-      let name = ``
-      for (let i = 0; i < sessionData.user.name.length; i++) {
-        if (i > 0 && sessionData.user.name[i] === ` `) {
-          break
-        }
-        name += sessionData.user.name[i]
-      }
+      const name = sessionData.user.name.split(' ')[0]
       setMessage(`Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`)
     }
   }, [sessionData])
@@ -34,7 +30,7 @@ const Home: NextPage = () => {
     <>
       {sessionData ?
         <div className="h-screen w-screen bg-gray-900 absolute top-0">
-          <Navbar currentPage="home" />
+          <Navbar userImage={userImage} currentPage="home" />
           <div className="h-1/4 w-3/5 relative top-28 left-48">
             <h1 className="text-white text-5xl font-bold"> {message} </h1>
           </div>
