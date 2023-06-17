@@ -45,6 +45,11 @@ export const journalRouter = createTRPCRouter({
         summary = await cohere
           .summarize({
             text: input.description,
+            length: "auto",
+            format: "bullets",
+            model: "summarize-xlarge",
+            additional_command: "",
+            temperature: 0.3,
           })
           .then((result) => result.body.summary);
       } catch {
@@ -81,6 +86,11 @@ export const journalRouter = createTRPCRouter({
         summary = await cohere
           .summarize({
             text: input.description,
+            length: "auto",
+            format: "bullets",
+            model: "summarize-xlarge",
+            additional_command: "",
+            temperature: 0.3,
           })
           .then((result) => result.body.summary);
       } catch {
