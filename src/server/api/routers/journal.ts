@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import cohere from "~/server/api/services/cohere";
+import {
+  getFirstDayOfWeek,
+  getLastDayOfWeek,
+} from "~/server/api/helpers/dates";
+import { askChatGpt } from "../services/openai";
 
 import { validateJournalOwnership } from "../middlewares/journal";
 
@@ -109,4 +114,38 @@ export const journalRouter = createTRPCRouter({
         },
       });
     }),
+  generateWeeklyReports: protectedProcedure.mutation(async ({ ctx }) => {
+    const firstDayOfWeek = getFirstDayOfWeek().toDate();
+    const lastDayOfWeek = getLastDayOfWeek().toDate();
+
+    const journals = await ctx.prisma.journal.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        createdAt: {
+          gte: firstDayOfWeek,
+          lte: lastDayOfWeek,
+        },
+      },
+    });
+
+    const journalSummaries = journals
+      .map((journal) => {
+        return `Journal Title: ${journal.title} - Journal Summary: ${
+          journal.summary
+        } - Created Date: ${journal.createdAt.toDateString()}`;
+      })
+      .join("; ");
+
+    const inputPrompt = `Please make an overview of what has happened over the week and give me encouraging statements to uplift my spirts. The following are the journals that have been created this week: ${journalSummaries}.`;
+    const weeklyReport = await askChatGpt(inputPrompt);
+
+    return ctx.prisma.user.update({
+      where: {
+        id: ctx.session.user.id,
+      },
+      data: {
+        weeklyReport,
+      },
+    });
+  }),
 });

@@ -62,6 +62,7 @@ model User {
     endRequests   EndRequest[]
     messages      Message[]
     aiChat        AIChat?
+    weeklyReport  String?      @db.Text
 }
 
 model Journal {

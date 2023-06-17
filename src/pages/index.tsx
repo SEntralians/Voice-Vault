@@ -8,7 +8,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Loader } from "~/components/loaders";
 import toast, { Toaster } from "react-hot-toast";
 
-
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
   const [title, setTitle] = useState("");
@@ -17,20 +16,18 @@ const Home: NextPage = () => {
   const [journalText, setJournalText] = useState("");
   const [journalWrite, setJounralWrite] = useState(false);
   const [greeted, setGreeted] = useState(false);
-  const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
   const greeting = () => {
-    const now = new Date()
-    const hour = now.getHours()
+    const now = new Date();
+    const hour = now.getHours();
     if (hour < 12) {
-      return 'morning'
+      return "morning";
     } else if (hour < 18) {
-      return 'afternoon'
+      return "afternoon";
     } else {
-      return 'evening'
+      return "evening";
     }
-  }
-
+  };
 
   const { mutate: addJournal, isLoading: isAddingJournal } =
     api.journal.createJournal.useMutation({
@@ -59,7 +56,6 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    console.log(sessionData);
     if (sessionData && sessionData.user.name) {
       const name = sessionData.user.name.split(" ")[0] ?? "user";
       setMessage(
@@ -70,22 +66,25 @@ const Home: NextPage = () => {
 
   return (
     <>
-      {sessionData ?
-        (<div className="h-screen w-screen bg-background-100 absolute top-0">
+      {sessionData ? (
+        <div className="h-screen w-screen bg-background-100">
           <Navbar currentPage="home" />
-          <div className="h-1/4 w-3/5 relative top-28 left-48">
-            <h1 className="text text-primary-200 text-6xl font-bold"> {message} </h1>
+          <div className="mx-32 mt-20">
+            <h1 className="text text-6xl font-bold text-primary-200">
+              {message}
+            </h1>
           </div>
-          <div className="relative left-48 top-28 h-1/4 w-3/5">
-            <h1 className="text-3xl text-primary-100 font-serif"> {journalText} </h1>
+          <div className="mx-32 mt-10">
+            <h1 className="font-serif text-3xl text-primary-100">
+              {journalText}
+            </h1>
           </div>
           {journalText.length > 0 && (
-            <div className="relative left-48 top-28 h-1/4 w-3/5">
+            <div className="">
               <button
-                className="absolute bottom-10 px-7 z-30 h-32 w-min cursor-pointer rounded-lg bg-secondary-100 p-0 text-primary-100 font-bold font-serif text-3xl"
+                className="ml-32 mt-20 h-32 w-min cursor-pointer rounded-lg bg-secondary-100 p-0 px-7 font-serif text-3xl font-bold text-primary-100"
                 onClick={handleOpenModal}
               >
-
                 Save as Journal?
               </button>
             </div>
@@ -93,10 +92,10 @@ const Home: NextPage = () => {
           <Transition.Root show={isModalOpen} as={Fragment}>
             <Dialog
               as="div"
-              className="fixed inset-0 z-50 overflow-y-auto"
+              className="fixed inset-0 overflow-y-auto"
               onClose={() => setIsModalOpen(false)}
             >
-              <div className="z-50 flex min-h-screen items-center justify-center">
+              <div className="flex min-h-screen items-center justify-center">
                 <Dialog.Overlay className="fixed inset-0 -z-10 bg-black opacity-30" />
 
                 <div className="w-1/2 rounded-lg bg-white p-8">

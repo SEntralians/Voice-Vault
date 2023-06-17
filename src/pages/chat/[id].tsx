@@ -49,7 +49,8 @@ const Chat: NextPage = () => {
   }
 
   return (
-    <>
+    <div className="h-full w-full bg-background-100">
+      <Navbar currentPage="discussion" />
       {match<[ChatStatus, boolean]>([status, isCreator])
         .with(["PENDING", true], () => (
           <CreatorChatBox
@@ -114,7 +115,7 @@ const Chat: NextPage = () => {
           <DonePage chatId={id} userId={session.data?.user.id ?? ""} />
         ))
         .run()}
-    </>
+    </div>
   );
 };
 
@@ -150,8 +151,7 @@ const CreatorChatBox: FC<CreatorChatBoxProps> = ({
 
   return (
     <>
-      <Navbar currentPage="discussion" />
-      <div className="flex px-10 py-20">
+      <div className="flex bg-background-100 px-10 py-20">
         <div className="w-3/12">
           <button
             className="mb-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:opacity-80"
@@ -246,7 +246,7 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
 
   return (
     <>
-      <div className="flex px-10 py-20">
+      <div className="flex bg-background-100 px-10 py-20">
         <div className="w-3/12">
           <div className="my-5 rounded-lg border border-white bg-white p-4">
             <div className="flex items-center">
@@ -274,9 +274,7 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
           </div>
           {/* text for choose a top */}
           <div className="mt-5 rounded-3xl p-4 text-white">Choose a side: </div>
-          <div className="rounded-3xl p-4 text-white">
-            Description: {description}
-          </div>
+          <div className="rounded-3xl p-4 text-white">Topic: {description}</div>
           <div
             className={`my-5 cursor-pointer rounded-lg bg-white p-4 ${
               isLeftSelected ? "bg-white/40" : ""
@@ -437,24 +435,24 @@ const ChatMessage: FC<ChatMessageProps> = ({
   return (
     <>
       {chatMessages && ifUserHasOffered !== undefined && pendingRequest && (
-        <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
-          <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
-            <div className="flex items-center bg-primary-200 px-10 py-5">
+        <div className="m-10 flex h-full flex-row items-center justify-center gap-5 bg-background-100">
+          <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-white shadow-xl">
+            <div className="flex items-center bg-primary-300 px-10 py-5">
               <div className="flex items-center space-x-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-profile-left">
                   <UserCircleIcon className="h-6 w-6 text-white" />
                 </div>
-                <div className="text-lg font-medium text-white">
+                <div className="text-lg font-medium text-black">
                   {joiner?.name}
                 </div>
               </div>
-              <div className="mx-4 flex-1 text-center text-lg font-medium text-white">
+              <div className="mx-4 flex-1 text-center text-lg font-extrabold text-black">
                 {description}
               </div>
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500">
+              <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-profile-right">
                 <UserCircleIcon className="h-4 w-4 text-white" />
               </div>
-              <div className="text-lg font-medium text-white">
+              <div className="text-lg font-medium text-black">
                 {creator.name}
               </div>
             </div>
@@ -467,19 +465,19 @@ const ChatMessage: FC<ChatMessageProps> = ({
                 >([isCreator, chatMessage.type])
                   .with([true, "CREATOR"], () => ({
                     position: "justify-end",
-                    color: "bg-blue-500",
+                    color: "bg-primary-100 text-white",
                   }))
                   .with([true, "JOINER"], () => ({
                     position: "justify-start",
-                    color: "bg-gray-700",
+                    color: "bg-primary-300 text-black",
                   }))
                   .with([false, "CREATOR"], () => ({
                     position: "justify-start",
-                    color: "bg-gray-700",
+                    color: "bg-primary-300 text-black",
                   }))
                   .with([false, "JOINER"], () => ({
                     position: "justify-end",
-                    color: "bg-blue-500",
+                    color: "bg-primary-100 text-white",
                   }))
                   .exhaustive();
 
@@ -489,7 +487,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
                     className={`mb-4 flex ${messagePattern.position}`}
                   >
                     <div
-                      className={`${messagePattern.color} w-96 rounded-lg px-3 py-2 text-white`}
+                      className={`${messagePattern.color} w-96 rounded-lg px-3 py-2`}
                     >
                       {chatMessage.text}
                     </div>
@@ -504,14 +502,14 @@ const ChatMessage: FC<ChatMessageProps> = ({
                   type="text"
                   value={message}
                   onChange={handleMessageChange}
-                  className="flex-grow rounded-md bg-gray-800 px-3 py-2 text-white outline-none focus:ring-1 focus:ring-blue-500"
+                  className="flex-grow rounded-md bg-gray-300 px-3 py-2 text-black outline-none focus:ring-1 focus:ring-primary-100"
                   placeholder={`This chat has ${
                     MESSAGE_LIMIT - chatMessages.length
                   } messages left.`}
                 />
                 <button
                   type="submit"
-                  className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-blue-500 text-white disabled:opacity-50"
+                  className="ml-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary-100 text-white disabled:opacity-50"
                   disabled={message.length === 0}
                   onClick={handleSendMessage}
                 >
@@ -520,29 +518,29 @@ const ChatMessage: FC<ChatMessageProps> = ({
               </div>
             </div>
           </div>
-          <div className="flex h-screen flex-col items-center rounded-lg bg-gray-900 p-10">
-            <div className="mb-4 rounded-lg border bg-white p-4">
-              <div className="mb-2 rounded-lg border p-2">
-                <div className="text-sm text-gray-500">
-                  Joiner Selected Topic
+          <div className="flex h-screen flex-col items-center rounded-lg bg-primary-300 px-5 py-10">
+            <div className="mb-4 w-full rounded-lg border bg-white p-4">
+              <div className="flex h-full flex-row gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-profile-left">
+                  <UserCircleIcon className="h-6 w-6 text-white" />
                 </div>
-              </div>
-              <div className="flex h-full items-center justify-center">
-                <div className="mb-5 text-2xl font-bold text-blue-500">
-                  {joinerSelectedTopic}
+                <div className="flex flex-col gap-1">
+                  <div className="text-lg font-bold">{joinerSelectedTopic}</div>
+                  <div className="text-sm">{joiner?.name ?? "N/A"}</div>
                 </div>
               </div>
             </div>
 
-            <div className="mb-4 rounded-lg border bg-white p-4">
-              <div className="mb-2 rounded-lg border p-2">
-                <div className="text-sm text-gray-500">
-                  Creator Selected Topic
+            <div className="mb-4 w-full rounded-lg border bg-white p-4">
+              <div className="flex h-full flex-row gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-profile-right">
+                  <UserCircleIcon className="h-6 w-6 text-white" />
                 </div>
-              </div>
-              <div className="flex h-full items-center justify-center">
-                <div className="mb-5 text-2xl font-bold text-red-500">
-                  {creatorSelectedTopic}
+                <div className="flex flex-col gap-1">
+                  <div className="text-lg font-bold">
+                    {creatorSelectedTopic}
+                  </div>
+                  <div className="text-sm">{creator.name}</div>
                 </div>
               </div>
             </div>
