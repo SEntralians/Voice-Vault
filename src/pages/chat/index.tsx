@@ -48,14 +48,15 @@ const AIChatPage: NextPage = () => {
             <div className="flex flex-grow flex-col overflow-y-auto bg-background-100 p-4">
               <div className="mb-4 flex justify-start">
                 <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 font-semibold text-gray-800">
-                  Hey Hans! How was your day? Did something interesting happen today? Tell me!
+                  Hey Hans! How was your day? Did something interesting happen
+                  today? Tell me!
                 </div>
               </div>
               {conversations.map((conversation) => {
                 return (
                   <>
                     <div
-                      key={conversation.id}
+                      key={`${conversation.id}_user`}
                       className="mb-4 flex justify-end"
                     >
                       <div className="text-primary-800 w-full max-w-lg rounded-lg  bg-green-500 px-6 py-4">
@@ -63,7 +64,7 @@ const AIChatPage: NextPage = () => {
                       </div>
                     </div>
                     <div
-                      key={conversation.id}
+                      key={`${conversation.id}_ai`}
                       className="mb-4 flex justify-start"
                     >
                       <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 text-gray-800">
