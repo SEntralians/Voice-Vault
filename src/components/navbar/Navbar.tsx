@@ -2,8 +2,8 @@ import type { FC } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
 interface Props {
   currentPage: string;
@@ -56,30 +56,30 @@ const Navbar: FC<Props> = ({ currentPage }) => {
         </div>
 
         <div className="absolute inset-x-0 z-20 mx-6 flex flex-col text-xl text-white duration-300 ease-in-out  dark:bg-gray-800 lg:relative lg:top-0 lg:mx-8 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:flex-row lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
-          <a
-            href="home"
+          <Link
+            href="/home"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-              currentPage === "home" ? "underline font-bold" : ""
+              currentPage === "home" ? "font-bold underline" : ""
             }`}
           >
             My Mental Space
-          </a>
-          <a
-            href="discussion"
+          </Link>
+          <Link
+            href="/discussion"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-              currentPage === "discussion" ? "underline font-bold" : ""
+              currentPage === "discussion" ? "font-bold underline" : ""
             }`}
           >
             Discussions
-          </a>
-          <a
-            href="challenges"
+          </Link>
+          <Link
+            href="/challenges"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-              currentPage === "challenges" ? "underline font-bold" : ""
+              currentPage === "challenges" ? "font-bold underline" : ""
             }`}
           >
             Challenges
-          </a>
+          </Link>
 
           <div className="ml-96 mt-4 items-center first-letter:flex lg:mt-0">
             <button

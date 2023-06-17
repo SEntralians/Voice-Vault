@@ -8,14 +8,19 @@ export default {
         primary: {
           100: "#568446",
           200: "#05295C",
+          300: "#C3DFAFFF",
         },
         secondary: {
           100: "#C3DFAF",
-          200: "#89C468"
+          200: "#89C468",
         },
         background: {
           100: "#F8F5E9",
-        }
+        },
+        profile: {
+          left: "#4069A2FF",
+          right: "#CCD22AFF",
+        },
       },
     },
   },
