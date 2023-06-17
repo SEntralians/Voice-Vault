@@ -186,7 +186,7 @@ const AuthShowcase: React.FC = () => {
           <Image
             src="images/logo_opaque.svg"
             alt="Logo"
-            className="rounded-full"
+            className="rounded-full border-2 border-primary-200"
             width={600}
             height={600}
           />
