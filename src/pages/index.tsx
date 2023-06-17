@@ -173,9 +173,9 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
   const [ isRolling, setIsRolling ] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setIsRolling(true);
-    await signIn("google");
+    void signIn("google");
   };
 
   return (
