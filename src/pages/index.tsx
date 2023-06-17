@@ -173,9 +173,9 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
   const [ isRolling, setIsRolling ] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setIsRolling(true);
-    sessionData ? () => void signOut() : () => void signIn()
+    await signIn("google");
   };
 
   return (
@@ -184,7 +184,7 @@ const AuthShowcase: React.FC = () => {
           isRolling ? "-translate-x-full -rotate-180" : ""
         } transition-transform duration-1000`}>
           <Image
-            src="images/logo_opaque.svg" // Replace with the path to your logo image
+            src="images/logo_opaque.svg"
             alt="Logo"
             className="rounded-full"
             width={600}
@@ -199,9 +199,9 @@ const AuthShowcase: React.FC = () => {
         <div className="flex justify-center">
           <button
             onClick={handleLogin}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md focus:outline-none"
+            className="bg-primary-300 text-primary-200 font-bold font-mono hover:bg-blue-600 px-4 py-2 rounded-md focus:outline-none"
           >
-            {sessionData ? "Sign out" : "Sign in with Google"}
+            Sign in with Google
           </button>
         </div>
       </div>
