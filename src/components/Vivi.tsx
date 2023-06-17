@@ -182,7 +182,7 @@ const Vivi = (props: ViviProps) => {
   };
 
   return (
-    <div className="absolute bottom-0 right-0  overflow-hidden">
+    <div className="absolute bottom-0 right-0 z-auto overflow-hidden">
       <div>
         <link
           href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css"

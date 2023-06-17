@@ -55,7 +55,7 @@ const Navbar: FC<Props> = ({ currentPage }) => {
           <h1 className="ml-4 text-3xl font-bold text-white">VoiceVault</h1>
         </div>
 
-        <div className="absolute inset-x-0 z-20 mx-6 flex flex-col text-xl text-white duration-300 ease-in-out  dark:bg-gray-800 lg:relative lg:top-0 lg:mx-8 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:flex-row lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
+        <div className="absolute inset-x-0 z-20 mx-auto flex flex-col text-xl text-white duration-300 ease-in-out  dark:bg-gray-800 lg:relative lg:top-0 lg:mx-8 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:flex-row lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
           <Link
             href="/home"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
@@ -81,7 +81,10 @@ const Navbar: FC<Props> = ({ currentPage }) => {
             Challenges
           </Link>
 
-          <div className="ml-96 mt-4 items-center first-letter:flex lg:mt-0">
+
+        </div>
+
+        <div className="mt-4 items-center first-letter:flex lg:mt-0">
             <button
               className="mx-4 hidden transform text-gray-600 transition-colors duration-300 hover:text-gray-700 focus:text-gray-700 focus:outline-none dark:text-gray-200 dark:hover:text-gray-400 dark:focus:text-gray-400 lg:block"
               aria-label="show notifications"
@@ -127,7 +130,6 @@ const Navbar: FC<Props> = ({ currentPage }) => {
               </div>
             )}
           </div>
-        </div>
       </div>
     </nav>
   );
