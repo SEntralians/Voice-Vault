@@ -10,6 +10,7 @@ const Home: NextPage = () => {
   const { data: sessionData } = useSession();
   const [message, setMessage] = useState('')
   const [greeted, setGreeted ] = useState(false)
+  const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
   useEffect(() => {
     console.log(sessionData)
@@ -23,7 +24,7 @@ const Home: NextPage = () => {
     <>
       {sessionData ?
         <div className="h-screen w-screen bg-gray-900 absolute top-0">
-          <Navbar currentPage="home" />
+          <Navbar userImage={userImage} currentPage="home" />
           <div className="h-1/4 w-3/5 relative top-28 left-48">
             <h1 className="text-white text-6xl font-bold"> {message} </h1>
           </div>
