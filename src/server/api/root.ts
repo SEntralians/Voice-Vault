@@ -5,6 +5,7 @@ import { analysisRouter } from "~/server/api/routers/analysis";
 import { endRequestRouter } from "~/server/api/routers/endRequest";
 import { aiChatRouter } from "~/server/api/routers/aiChat";
 import { noteRouter } from "~/server/api/routers/note";
+import { userRouter } from "~/server/api/routers/user";
 import { createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   analysis: analysisRouter,
   aiChat: aiChatRouter,
   note: noteRouter,
+  user: userRouter,
 });
 
 // export type definition of API
