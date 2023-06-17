@@ -8,51 +8,67 @@ import { userAgent } from "next/server";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
-  const [message, setMessage] = useState('')
-  const [journalText, setJournalText] = useState('')
-  const [journalWrite, setJounralWrite] = useState(false)
-  const [greeted, setGreeted ] = useState(false)
+  const [message, setMessage] = useState("");
+  const [journalText, setJournalText] = useState("");
+  const [journalWrite, setJounralWrite] = useState(false);
+  const [greeted, setGreeted] = useState(false);
   const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
-  function saveJournal(textEntry: string) : void {
+  function saveJournal(textEntry: string): void {
     // create new journal entry and save to database
   }
 
   useEffect(() => {
-    console.log(sessionData)
+    console.log(sessionData);
     if (sessionData && sessionData.user.name) {
-      const name = sessionData.user.name.split(' ')[0]
-      setMessage(`Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`)
+      const name = sessionData.user.name.split(" ")[0] ?? "user";
+      setMessage(
+        `Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`
+      );
     }
-  }, [sessionData])
+  }, [sessionData]);
 
   return (
     <>
-      {sessionData ?
-        <div className="h-screen w-screen bg-gray-900 absolute top-0">
+      {sessionData ? (
+        <div className="absolute top-0 h-screen w-screen bg-gray-900">
           <Navbar userImage={userImage} currentPage="home" />
-          <div className="h-1/4 w-3/5 relative top-28 left-48">
-            <h1 className="text-white text-5xl font-bold"> {message} </h1>
+          <div className="relative left-48 top-28 h-1/4 w-3/5">
+            <h1 className="text-5xl font-bold text-white"> {message} </h1>
           </div>
-          <div className="h-1/4 w-3/5 relative top-28 left-48">
-            <h1 className="text-white text-3xl"> {journalText} </h1>
+          <div className="relative left-48 top-28 h-1/4 w-3/5">
+            <h1 className="text-3xl text-white"> {journalText} </h1>
           </div>
-          {journalText.length > 0 &&
-            <div className="h-1/4 w-3/5 relative top-28 left-48">
-              <button className="absolute bottom-10 h-32 w-32 rounded-lg bg-white p-0 text-3xl" onClick={() => saveJournal(journalText)}> Save as Journal? </button>
+          {journalText.length > 0 && (
+            <div className="relative left-48 top-28 h-1/4 w-3/5">
+              <button
+                className="absolute bottom-10 h-32 w-32 rounded-lg bg-white p-0 text-3xl"
+                onClick={() => saveJournal(journalText)}
+              >
+                {" "}
+                Save as Journal?{" "}
+              </button>
             </div>
-          }
-          <Vivi message={message} greeted={greeted} setGreeted={setGreeted} setJournalWrite={setJounralWrite} journalWrite={journalWrite} setJournalText={setJournalText} journalText={journalText}/>
+          )}
+          <Vivi
+            message={message}
+            greeted={greeted}
+            setGreeted={setGreeted}
+            setJournalWrite={setJounralWrite}
+            journalWrite={journalWrite}
+            setJournalText={setJournalText}
+            journalText={journalText}
+          />
         </div>
-       :
-       <div className="flex min-h-screen flex-col items-center justify-center bg-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="flex flex-col items-center gap-2">
-            <AuthShowcase />
+      ) : (
+        <div className="flex min-h-screen flex-col items-center justify-center bg-white">
+          <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+            <div className="flex flex-col items-center gap-2">
+              <AuthShowcase />
+            </div>
           </div>
         </div>
-      </div>
-       }
+      )}
     </>
   );
 };
