@@ -39,17 +39,16 @@ const AIChatPage: NextPage = () => {
 
   return (
     <>
-      <body className="bg-background-100 top-0">
-      <Navbar currentPage="chat" />
+      <body className="top-0 bg-background-100">
+        <Navbar currentPage="chat" />
         <div className="flex h-screen flex-row items-center justify-center gap-5">
           <div className="flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-white shadow-lg">
             <div className="flex items-center bg-background-100 px-10 py-5"></div>
 
             <div className="flex flex-grow flex-col overflow-y-auto bg-background-100 p-4">
               <div className="mb-4 flex justify-start">
-                <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 text-gray-800 font-semibold">
-                  Hey Hans! How was your day? Did something interesting happen
-                  today? Tell me what's on your mind!
+                <div className="w-full max-w-lg rounded-lg bg-gray-100 px-6 py-4 font-semibold text-gray-800">
+                  Hey Hans! How was your day? Did something interesting happen today? Tell me!
                 </div>
               </div>
               {conversations.map((conversation) => {
