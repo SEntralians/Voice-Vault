@@ -151,6 +151,13 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
+model Note {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    content   String   @db.Text
+}
+
 enum ChatStatus {
     PENDING
     ACCEPTED
