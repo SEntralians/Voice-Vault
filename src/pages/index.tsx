@@ -4,29 +4,40 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import Vivi from "~/components/Vivi";
 import Navbar from "~/components/navbar/Navbar";
-import { userAgent } from "next/server";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
   const [message, setMessage] = useState('')
   const [greeted, setGreeted ] = useState(false)
-  const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
+
+  //string that says morning, afternoon, night
+  const greeting = () => {
+    const now = new Date()
+    const hour = now.getHours()
+    if (hour < 12) {
+      return 'morning'
+    } else if (hour < 18) {
+      return 'afternoon'
+    } else {
+      return 'evening'
+    }
+  }
 
   useEffect(() => {
     console.log(sessionData)
     if (sessionData && sessionData.user.name) {
       const name = sessionData.user.name.split(' ')[0]
-      setMessage(`Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`)
+      setMessage(`Hey ${name}! How was your ${greeting()}? Did something interesting happen today? Tell me what's on your mind!`)
     }
   }, [sessionData])
 
   return (
     <>
       {sessionData ?
-        <div className="h-screen w-screen bg-gray-900 absolute top-0">
-          <Navbar userImage={userImage} currentPage="home" />
+        <div className="h-screen w-screen bg-background-100 absolute top-0">
+          <Navbar currentPage="home" />
           <div className="h-1/4 w-3/5 relative top-28 left-48">
-            <h1 className="text-white text-6xl font-bold"> {message} </h1>
+            <h1 className="text text-primary-200 text-6xl font-bold"> {message} </h1>
           </div>
           <Vivi message={message} greeted={greeted} setGreeted={setGreeted}/>
         </div>

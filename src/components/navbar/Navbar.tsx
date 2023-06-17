@@ -1,15 +1,18 @@
 import type { FC } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface Props {
   currentPage: string;
-  userImage: string;
 }
 
-const Navbar: FC<Props> = ({ currentPage, userImage }) => {
+const Navbar: FC<Props> = ({ currentPage }) => {
+  const { data: sessionData } = useSession();
   const router = useRouter();
+  const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -41,9 +44,10 @@ const Navbar: FC<Props> = ({ currentPage, userImage }) => {
   return (
     <nav className="bg-primary-100 h-20 flex items-center">
       <div className="mx-4 px-4 w-full flex justify-between items-center">
-        <div className="flex items-center">
-          <img className="h-16 w-16 bg-background-100 rounded-full" src="images/logo_transparent.svg"></img>
-          <h1 className="text-white text-3xl font-bold ml-4">VoiceVault</h1>
+        <div className="flex items-center inset-x-0 z-20">
+          <Image className=" bg-background-100 rounded-full" src="images/logo_transparent.svg" alt={""} width={66} height={66}/>
+          <Link href="/">
+          <h1 className="text-white text-3xl font-bold ml-4">VoiceVault</h1></Link>
         </div>
 
              <div className="mx-6 flex flex-col lg:mx-8 text-white text-xl font-serif lg:flex-row absolute inset-x-0 z-20  duration-300 ease-in-out dark:bg-gray-800 lg:relative lg:top-0 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
@@ -86,7 +90,7 @@ const Navbar: FC<Props> = ({ currentPage, userImage }) => {
                   aria-label="toggle profile dropdown"
                   onClick={handleDropdownToggle}
                 >
-                  <img className="h-16 w-16 overflow-hidden bg-background-100 rounded-full" src={userImage}></img>
+                  <img className="h-16 w-16 overflow-hidden bg-background-100 rounded-full" src={userImage} alt="images/logo_opaque.svg"></img>
                 </button>
 
                 {showDropdown && (

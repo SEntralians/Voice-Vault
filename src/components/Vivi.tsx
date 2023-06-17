@@ -181,7 +181,7 @@ const Vivi = (props: ViviProps) => {
         </div>
       </div>
       <button
-        className="absolute bottom-10 right-10 h-32 w-32 rounded-full bg-white p-0 text-5xl"
+        className="absolute bottom-10 right-10 h-32 w-32 rounded-full bg-primary-200 p-0 text-5xl font-bold text-background-100"
         onClick={() => handleListening()}
       >
         V
