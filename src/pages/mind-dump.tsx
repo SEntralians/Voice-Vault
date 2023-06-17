@@ -212,12 +212,12 @@ const MindDump = () => {
         )}
         {isCreatingJournal && (
           <form
-            className="my-20 w-9/12 p-8"
+            className="my-20 w-9/12 p-8 text-primary-100"
             onSubmit={handleSubmit(addJournal)}
           >
             <div className="mb-4">
               <label
-                className="mb-2 block text-sm font-bold text-white"
+                className="mb-2 block text-6xl font-bold"
                 htmlFor="title"
               >
                 Title
@@ -234,7 +234,7 @@ const MindDump = () => {
 
             <div className="mb-4">
               <label
-                className="mb-2 block text-sm font-bold text-white"
+                className="mb-2 block text-4xl  font-bold"
                 htmlFor="description"
               >
                 Description
@@ -264,7 +264,7 @@ const MindDump = () => {
           >
             <div className="mb-4">
               <label
-                className="mb-2 block text-sm font-bold text-white"
+                className="mb-2 block text-primary-100 font-bold text-6xl"
                 htmlFor="title"
               >
                 Title
@@ -281,7 +281,7 @@ const MindDump = () => {
 
             <div className="mb-4">
               <label
-                className="mb-2 block text-sm font-bold text-white"
+                className="mb-2 block text-4xl font-bold text-primary-100"
                 htmlFor="description"
               >
                 Description
