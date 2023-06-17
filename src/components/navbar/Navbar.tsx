@@ -55,11 +55,11 @@ const Navbar: FC<Props> = ({ currentPage }) => {
           <h1 className="ml-4 text-3xl font-bold text-white">VoiceVault</h1>
         </div>
 
-        <div className="absolute inset-x-0 z-20 mx-6 flex flex-col font-serif text-xl text-white duration-300 ease-in-out  dark:bg-gray-800 lg:relative lg:top-0 lg:mx-8 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:flex-row lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
+        <div className="absolute inset-x-0 z-20 mx-6 flex flex-col text-xl text-white duration-300 ease-in-out  dark:bg-gray-800 lg:relative lg:top-0 lg:mx-8 lg:mt-0 lg:flex lg:w-auto lg:translate-x-0 lg:flex-row lg:items-center lg:bg-transparent  lg:p-0 lg:opacity-100">
           <a
             href="home"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-              currentPage === "home" ? "underline" : ""
+              currentPage === "home" ? "underline font-bold" : ""
             }`}
           >
             My Mental Space
@@ -67,7 +67,7 @@ const Navbar: FC<Props> = ({ currentPage }) => {
           <a
             href="discussion"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-              currentPage === "discussion" ? "underline" : ""
+              currentPage === "discussion" ? "underline font-bold" : ""
             }`}
           >
             Discussions
@@ -75,7 +75,7 @@ const Navbar: FC<Props> = ({ currentPage }) => {
           <a
             href="challenges"
             className={`mx-3 mt-2 transform rounded-md px-3 py-2 transition-colors duration-300 dark:text-gray-200 lg:mt-0 ${
-              currentPage === "challenges" ? "underline" : ""
+              currentPage === "challenges" ? "underline font-bold" : ""
             }`}
           >
             Challenges
