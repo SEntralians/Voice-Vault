@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import Vivi from "~/components/Vivi";
 import Navbar from "~/components/navbar/Navbar";
+import { userAgent } from "next/server";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -13,13 +14,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     console.log(sessionData)
     if (sessionData && sessionData.user.name) {
-      let name = ``
-      for (let i = 0; i < sessionData.user.name.length; i++) {
-        if (i > 0 && sessionData.user.name[i] === ` `) {
-          break
-        }
-        name += sessionData.user.name[i]
-      }
+      const name = sessionData.user.name.split(' ')[0]
       setMessage(`Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`)
     }
   }, [sessionData])
