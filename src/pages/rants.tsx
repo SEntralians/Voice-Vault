@@ -7,6 +7,7 @@ import Draggable, {
 } from "react-draggable";
 import { api } from "~/utils/api";
 import toast, { Toaster } from "react-hot-toast";
+import { withAuth } from "~/middlewares";
 
 const PADDING = 500;
 
@@ -27,6 +28,9 @@ const StickyNotes: React.FC = () => {
       await refetchNotes();
       setNewNoteText("");
       toast.success("Note added!");
+    },
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
 
@@ -110,4 +114,4 @@ const StickyNotes: React.FC = () => {
   );
 };
 
-export default StickyNotes;
+export default withAuth(StickyNotes);
