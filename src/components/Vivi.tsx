@@ -32,13 +32,13 @@ const Vivi = (props: ViviProps) => {
     if (listening) {
       SpeechRecognition.stopListening();
       if (props.journalWrite) {
-        props.setJournalWrite(false)
+        props.setJournalWrite(false);
       }
     } else {
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
       if (props.journalWrite === false) {
-        props.setJournalWrite(true)
+        props.setJournalWrite(true);
       }
     }
   }
@@ -107,9 +107,9 @@ const Vivi = (props: ViviProps) => {
 
   useEffect(() => {
     if (props.journalWrite) {
-      props.setJournalText(transcript)
+      props.setJournalText(transcript);
     }
-  }, [transcript])
+  }, [transcript]);
 
   function speak(words: string) {
     speechSynthesis.cancel();
@@ -140,7 +140,6 @@ const Vivi = (props: ViviProps) => {
   };
 
   const predictWebcam = async () => {
-    console.log("watching you!!!");
     const gestureRecognizer = gestureRecognizerRef.current;
     const video = videoRef.current;
     const runningMode = "VIDEO";
@@ -164,15 +163,18 @@ const Vivi = (props: ViviProps) => {
           if (results.gestures[0][0].categoryName === "Thumb_Up") {
             SpeechRecognition.stopListening();
             if (props.journalWrite !== null) {
-              props.setJournalWrite(false)
+              props.setJournalWrite(false);
             }
-          } else if (results.gestures[0][0].categoryName === "Open_Palm" && props.journalWrite !== null) {
+          } else if (
+            results.gestures[0][0].categoryName === "Open_Palm" &&
+            props.journalWrite !== null
+          ) {
             resetTranscript();
-            SpeechRecognition.startListening({ continuous: true })
-            props.setJournalWrite(true)
+            SpeechRecognition.startListening({ continuous: true });
+            props.setJournalWrite(true);
           } else if (results.gestures[0][0].categoryName === "Victory") {
             SpeechRecognition.startListening({ continuous: true });
-          } 
+          }
         }
       }
     }
