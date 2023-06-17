@@ -80,8 +80,8 @@ const Navbar: FC<Props> = ({ currentPage }) => {
           >
             Challenges
           </a>
-
-          <div className="ml-96 mt-4 items-center first-letter:flex lg:mt-0">
+        </div>
+        <div className="mx-4 mt-4 items-center first-letter:flex lg:mt-0">
             <button
               className="mx-4 hidden transform text-gray-600 transition-colors duration-300 hover:text-gray-700 focus:text-gray-700 focus:outline-none dark:text-gray-200 dark:hover:text-gray-400 dark:focus:text-gray-400 lg:block"
               aria-label="show notifications"
@@ -127,7 +127,7 @@ const Navbar: FC<Props> = ({ currentPage }) => {
               </div>
             )}
           </div>
-        </div>
+
       </div>
     </nav>
   );
