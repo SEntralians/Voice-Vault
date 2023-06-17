@@ -173,10 +173,9 @@ const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
   const [ isRolling, setIsRolling ] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setIsRolling(true);
     sessionData ? () => void signOut() : () => void signIn()
-    await signIn("google"); // Replace with your desired NextAuth provider
   };
 
   return (
@@ -208,14 +207,4 @@ const AuthShowcase: React.FC = () => {
       </div>
     </div>
   );
-  // return (
-  //   <div className="flex flex-col items-center justify-center gap-4">
-  //     <button
-  //       className="rounded-full bg-black/10 px-10 py-3 font-semibold text-black no-underline transition hover:bg-black/20"
-  //       onClick={sessionData ? () => void signOut() : () => void signIn()}
-  //     >
-  //       {sessionData ? "Sign out" : "Sign in"}
-  //     </button>
-  //   </div>
-  // );
 };
