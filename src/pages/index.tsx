@@ -8,6 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Loader } from "~/components/loaders";
 import toast, { Toaster } from "react-hot-toast";
 
+
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
   const [title, setTitle] = useState("");
@@ -17,6 +18,19 @@ const Home: NextPage = () => {
   const [journalWrite, setJounralWrite] = useState(false);
   const [greeted, setGreeted] = useState(false);
   const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
+
+  const greeting = () => {
+    const now = new Date()
+    const hour = now.getHours()
+    if (hour < 12) {
+      return 'morning'
+    } else if (hour < 18) {
+      return 'afternoon'
+    } else {
+      return 'evening'
+    }
+  }
+
 
   const { mutate: addJournal, isLoading: isAddingJournal } =
     api.journal.createJournal.useMutation({
@@ -49,28 +63,29 @@ const Home: NextPage = () => {
     if (sessionData && sessionData.user.name) {
       const name = sessionData.user.name.split(" ")[0] ?? "user";
       setMessage(
-        `Hey ${name}! How was your day? Did something interesting happen today? Tell me what's on your mind!`
+        `Hey ${name}! How was your ${greeting()}? Did something interesting happen today? Tell me what's on your mind!`
       );
     }
   }, [sessionData]);
 
   return (
     <>
-      {sessionData ? (
-        <div className="absolute top-0 h-screen w-screen bg-gray-900">
-          <Navbar userImage={userImage} currentPage="home" />
-          <div className="relative left-48 top-28 h-1/4 w-3/5">
-            <h1 className="text-5xl font-bold text-white"> {message} </h1>
+      {sessionData ?
+        (<div className="h-screen w-screen bg-background-100 absolute top-0">
+          <Navbar currentPage="home" />
+          <div className="h-1/4 w-3/5 relative top-28 left-48">
+            <h1 className="text text-primary-200 text-6xl font-bold"> {message} </h1>
           </div>
           <div className="relative left-48 top-28 h-1/4 w-3/5">
-            <h1 className="text-3xl text-white"> {journalText} </h1>
+            <h1 className="text-3xl text-primary-100 font-serif"> {journalText} </h1>
           </div>
           {journalText.length > 0 && (
             <div className="relative left-48 top-28 h-1/4 w-3/5">
               <button
-                className="absolute bottom-10 z-30 h-32 w-32 cursor-pointer rounded-lg bg-white p-0 text-3xl"
+                className="absolute bottom-10 px-7 z-30 h-32 w-min cursor-pointer rounded-lg bg-secondary-100 p-0 text-primary-100 font-bold font-serif text-3xl"
                 onClick={handleOpenModal}
               >
+
                 Save as Journal?
               </button>
             </div>

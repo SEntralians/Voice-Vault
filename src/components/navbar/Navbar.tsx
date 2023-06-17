@@ -1,16 +1,18 @@
 import type { FC } from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface Props {
   currentPage: string;
-  userImage: string;
 }
 
-const Navbar: FC<Props> = ({ currentPage, userImage }) => {
+const Navbar: FC<Props> = ({ currentPage }) => {
+  const { data: sessionData } = useSession();
   const router = useRouter();
+  const userImage = sessionData?.user.image ?? "images/logo_opaque.svg";
 
   const [showDropdown, setShowDropdown] = useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
