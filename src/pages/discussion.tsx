@@ -65,10 +65,11 @@ const DiscussionsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col">
-      <Navbar currentPage="discussion" />
-
-      <div className="font-roboto bg-gray-100">
+    <div>
+          <Navbar currentPage="discussion" />
+    
+    <div className="flex h-screen flex-col ">
+      <div className="font-roboto bg-background-100">
         <div className="px-6 py-8">
           <div className="container mx-auto flex justify-between">
             <div className="w-full lg:w-8/12">
@@ -171,6 +172,7 @@ const DiscussionsPage: React.FC = () => {
         </div>
       </div>
       <Toaster />
+    </div>
     </div>
   );
 };

@@ -76,7 +76,7 @@ const StickyNotes: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 bg-background-100">
       <h1 className="mb-4 text-center text-3xl font-bold text-white">
         Freedom Wall
       </h1>
