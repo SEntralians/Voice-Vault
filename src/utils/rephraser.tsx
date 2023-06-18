@@ -24,8 +24,7 @@ export default function Rephraser({ text }: RephraseToolProps): JSX.Element {
       frequency_penalty: 0,
       presence_penalty: 0,
     });
-    setRephrasedText(response?.data?.choices[0]?.text ?? "");
-    console.log(response.data.choices[0]?.text);
+    setRephrasedText(response?.data?.choices[0]?.text ?? "")
   }
 
   return (

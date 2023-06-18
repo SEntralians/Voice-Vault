@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Loader } from "~/components/loaders";
 import Navbar from "~/components/navbar";
+import { useJournalStore } from "~/stores/journal";
 
 import { withAuth } from "~/middlewares";
 import { api } from "~/utils/api";
@@ -33,11 +34,12 @@ const MindDump = () => {
     formState: { errors },
   } = useForm<Journal>();
 
+  const journalId = useJournalStore((state) => state.id);
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(
-    null
+    journalId
   );
   const [journalStatus, setJournalStatus] = useState<JournalStatus>(
-    JournalStatus.NotUsing
+    journalId ? JournalStatus.Viewing : JournalStatus.NotUsing
   );
 
   const { data: journals } = api.journal.getUserJournals.useQuery();
@@ -134,21 +136,21 @@ const MindDump = () => {
   return (
     <div>
       <Navbar currentPage="home" />
-      <div className="flex text-primary-200 h-screen w-screen bg-background-100 absolute -z-50 top-0 pt-16">
+      <div className="absolute top-0 -z-50 flex h-screen w-screen bg-background-100 pt-16 text-primary-200">
         {/* Left Side */}
         <div className="my-10 max-h-screen w-3/12 overflow-y-scroll bg-primary-100">
           <div
-            className="mx-5 my-5 flex cursor-pointer items-center font-thin bg-secondary-100 gap-3 rounded-lg border border-primary-200 p-5 hover:opacity-50"
+            className="mx-5 my-5 flex cursor-pointer items-center gap-3 rounded-lg border border-primary-200 bg-secondary-100 p-5 font-thin hover:opacity-50"
             onClick={setIsCreatingJournal}
           >
             <PlusCircleIcon className="text-primary-500 h-8 w-8" />
-            <div className="text-2xl font-bold m-">New Journal</div>
+            <div className="m- text-2xl font-bold">New Journal</div>
           </div>
 
           {journals.map((journal) => (
             <div
               key={journal.id}
-              className="relative mx-5 my-5 cursor-pointer border-b rounded-md border-primary-200 bg-secondary-100 p-4"
+              className="relative mx-5 my-5 cursor-pointer rounded-md border-b border-primary-200 bg-secondary-100 p-4"
             >
               <div className="text-lg font-bold">
                 {dayjs(journal.createdAt).format("MMMM DD, YYYY")}
@@ -172,7 +174,7 @@ const MindDump = () => {
                     })
                   }
                 >
-                  <TrashIcon className="h-6 w-6hover:opacity-80" />
+                  <TrashIcon className="w-6hover:opacity-80 h-6" />
                 </button>
               </div>
               <div
@@ -192,15 +194,25 @@ const MindDump = () => {
 
         {/* Right Side */}
         {journal && isViewingJournal && (
-          <div className="my-6 mx-16 w-9/12 p-8">
+          <div className="mx-16 my-6 w-9/12 p-8">
             <h1 className="mb-4 text-6xl font-bold">{journal.title}</h1>
             <div className="mx-10 my-6 flex flex-row items-start gap-5">
               <p className="mb-4">{journal.description}</p>
             </div>
 
-            <h2 className="mt-5 mx-10 text-primary-100 text-3xl font-bold">Summary:</h2>
-            <div className="mt-5 mx-10 bg-secondary-100 rounded-lg px-5 py-3">
-              {journal.summary}
+            <h2 className="mx-10 mt-5 text-3xl font-bold text-primary-100">
+              Summary:
+            </h2>
+            <div className="mx-10 mt-5 rounded-lg bg-secondary-100 px-5 py-3">
+              {journal.summary.split("-").map((summary, index) => {
+                if (summary === "") return;
+                return (
+                  <div key={index} className="mb-2">
+                    <span className="mr-3 font-bold">-</span>
+                    {summary.trim()}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -216,10 +228,7 @@ const MindDump = () => {
             onSubmit={handleSubmit(addJournal)}
           >
             <div className="mb-4">
-              <label
-                className="mb-2 block text-6xl font-bold"
-                htmlFor="title"
-              >
+              <label className="mb-2 block text-6xl font-bold" htmlFor="title">
                 Title
               </label>
               <input
@@ -264,7 +273,7 @@ const MindDump = () => {
           >
             <div className="mb-4">
               <label
-                className="mb-2 block text-primary-100 font-bold text-6xl"
+                className="mb-2 block text-6xl font-bold text-primary-100"
                 htmlFor="title"
               >
                 Title

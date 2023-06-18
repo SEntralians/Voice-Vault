@@ -7,6 +7,10 @@ import { GestureRecognizer, FilesetResolver } from "@mediapipe/tasks-vision";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import * as sentenceEncoder from "@tensorflow-models/universal-sentence-encoder";
+import { UniversalSentenceEncoder } from "@tensorflow-models/universal-sentence-encoder";
+import recognizeCommand from "~/utils/recognizeCommand";
+import { truncatedNormal } from "@tensorflow/tfjs";
 
 interface ViviProps {
   message: string;
@@ -16,6 +20,7 @@ interface ViviProps {
   setJournalWrite: (boolean: boolean) => void;
   journalText: string;
   setJournalText: (string: string) => void;
+  commandList: Array<string>
 }
 
 const Vivi = (props: ViviProps) => {
@@ -25,6 +30,8 @@ const Vivi = (props: ViviProps) => {
   const gestureOutputRef = useRef(null);
   const [webcamRunning, setWebcamRunning] = useState(false);
   const [voices, setVoices] = useState([] as SpeechSynthesisVoice[]);
+  const [modelSentenceEncoder, setModelSentenceEncoder] = useState<UniversalSentenceEncoder | null>(null);
+  const [command, setCommand] = useState('')
 
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
 
@@ -41,6 +48,11 @@ const Vivi = (props: ViviProps) => {
         props.setJournalWrite(true);
       }
     }
+  }
+
+  async function loadModelSentenceEncoder() {
+    const model = await sentenceEncoder.load();
+    setModelSentenceEncoder(model);
   }
 
   useEffect(() => {
@@ -62,7 +74,9 @@ const Vivi = (props: ViviProps) => {
             "Microsoft Sonia Online (Natural) - English (United Kingdom)"
         );
       setVoices(chosenVoice);
-    };
+    }
+
+    loadModelSentenceEncoder()
 
     const createGestureRecognizer = async () => {
       const vision = await FilesetResolver.forVisionTasks(
@@ -87,15 +101,26 @@ const Vivi = (props: ViviProps) => {
   }, []);
 
   useEffect(() => {
-    if (listening) {
-      speak("listening");
-    } else {
-      if (props.setJournalWrite === null) {
-        speak(`I understood ${transcript}`);
+    async function respond() {
+      if (listening) {
+        speak("listening");
       } else {
-        speak(`Interesting`);
+        if (props.journalWrite !== true) {
+          if (transcript.length > 0) {
+            speak(`i understand`)
+            if (modelSentenceEncoder !== null) {
+              const commandUnderstood = await recognizeCommand(transcript, props.commandList, modelSentenceEncoder)
+              speak(`I will now ${commandUnderstood}`);
+            }
+          }
+        } else {
+          speak(`Interesting`)
+          props.setJournalWrite(false)
+        }
       }
     }
+
+    respond()
   }, [listening]);
 
   useEffect(() => {
@@ -145,6 +170,7 @@ const Vivi = (props: ViviProps) => {
     const runningMode = "VIDEO";
     let lastVideoTime = -1;
     let results = undefined;
+    console.log("watching!!")
 
     if (runningMode !== "VIDEO") {
       if (gestureRecognizer instanceof GestureRecognizer) {
@@ -156,15 +182,13 @@ const Vivi = (props: ViviProps) => {
     if (video && video?.currentTime !== lastVideoTime) {
       lastVideoTime = video.currentTime;
       if (gestureRecognizer instanceof GestureRecognizer) {
-        results = await gestureRecognizer.recognizeForVideo(video, nowInMs);
+        results = await gestureRecognizer.recognizeForVideo(video, nowInMs)
+        console.log(results)
       }
       if (results && results.gestures.length > 0) {
         if (results.gestures[0] && results.gestures[0][0] !== undefined) {
           if (results.gestures[0][0].categoryName === "Thumb_Up") {
-            SpeechRecognition.stopListening();
-            if (props.journalWrite !== null) {
-              props.setJournalWrite(false);
-            }
+            SpeechRecognition.stopListening()
           } else if (
             results.gestures[0][0].categoryName === "Open_Palm" &&
             props.journalWrite !== null
@@ -173,7 +197,8 @@ const Vivi = (props: ViviProps) => {
             SpeechRecognition.startListening({ continuous: true });
             props.setJournalWrite(true);
           } else if (results.gestures[0][0].categoryName === "Victory") {
-            SpeechRecognition.startListening({ continuous: true });
+            SpeechRecognition.startListening({ continuous: true })
+            props.setJournalWrite(false)
           }
         }
       }
