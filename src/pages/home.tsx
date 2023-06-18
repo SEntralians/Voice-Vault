@@ -132,7 +132,7 @@ const Home: NextPage = () => {
                   <MagnifyingGlassCircleIcon className="h-10 w-10" />
                   <Link href="/ideas">
                     <button className="rounded-lg bg-secondary-100 px-5 py-2 font-semibold text-black hover:opacity-80">
-                      Serch Your Ideas
+                      Search Your Ideas
                     </button>
                   </Link>
                 </div>
