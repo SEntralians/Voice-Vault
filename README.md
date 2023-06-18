@@ -1,28 +1,34 @@
-# Create T3 App
+# VoiceVault Github
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+VoiceVault is a submission for PolyHack 2023
 
-## What's next? How do I make an app with this?
+VoiceVault is a digital platform designed to support mental health by providing asolution for handling stress and mental load. Our platform serves as a second brain, a smart digital notebook that allows users torecord their thoughts, encounters, and daily experiences.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+We believe that it is vital toprovide tools to cope with mental healthissues and build resilience rather than censoring harmful content on socialmedia.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+VoiceVault leverages artificial intelligence and big data to learn fromuser interactions and provide personalized feedback and insights. Voice Vault is aversatile and accessible tool that can helpusers improve their mental well-being, critical thinking, and communication skills.
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+# Features
 
-## Learn More
+VoiceVault's Main Features Include
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## Personal Journaling
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+![image](https://github.com/SEntralians/Voice-Vault/assets/72660375/401023fc-0a19-48e3-8a8f-456d104cd184)
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+Share your thoughts 
 
-## How do I deploy this?
+## Vivi the Personal AI 
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+![image](https://github.com/SEntralians/Voice-Vault/assets/72660375/8992a101-5217-42bb-8691-16184b71d5dd)
+
+Control VoiceVault with your Vivi, your own personal AI
+
+## Debate
+
+Have discussions with other people
+
+# Architecture 
+## General
+
+INSERT HERE
