@@ -1,1 +1,2 @@
 export const MESSAGE_LIMIT = 60;
+export const COSING_SIMILARITY_THRESHOLD = 0.5;

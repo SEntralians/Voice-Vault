@@ -6,6 +6,9 @@ import {
   getLastDayOfWeek,
 } from "~/server/api/helpers/dates";
 import { askChatGpt } from "../services/openai";
+import { getCosineSimilarity } from "../services/wink-nlp";
+import { parseSummary } from "../helpers/strings";
+import { COSING_SIMILARITY_THRESHOLD } from "~/constants";
 
 import { validateJournalOwnership } from "../middlewares/journal";
 
@@ -158,4 +161,33 @@ export const journalRouter = createTRPCRouter({
       },
     });
   }),
+  search: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().max(100),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const journals = await ctx.prisma.journal.findMany({
+        where: {
+          userId: ctx.session.user.id,
+        },
+      });
+
+      if (input.query === "") return journals;
+
+      const filteredJournals = journals
+        .map((journal) => {
+          const similarity = getCosineSimilarity(input.query, journal.summary);
+          const summary = parseSummary(journal.summary);
+          return {
+            ...journal,
+            similarity,
+            summary,
+          };
+        })
+        .filter((journal) => journal.similarity > COSING_SIMILARITY_THRESHOLD);
+
+      return filteredJournals;
+    }),
 });
