@@ -203,7 +203,7 @@ const AuthShowcase: React.FC = () => {
             onClick={handleLogin}
             className="bg-primary-300 text-primary-200 font-bold font-mono hover:bg-blue-600 px-4 py-2 rounded-md focus:outline-none"
           >
-            Sign in with Google
+            Sign in/Register with Google
           </button>
         </div>
       </div>
