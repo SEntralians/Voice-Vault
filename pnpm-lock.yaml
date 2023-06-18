@@ -89,9 +89,18 @@ dependencies:
   ts-pattern:
     specifier: ^4.3.0
     version: 4.3.0
+  wink-eng-lite-web-model:
+    specifier: ^1.5.0
+    version: 1.5.0(wink-nlp@1.14.1)
+  wink-nlp:
+    specifier: ^1.14.1
+    version: 1.14.1
   zod:
     specifier: ^3.21.4
     version: 3.21.4
+  zustand:
+    specifier: ^4.3.8
+    version: 4.3.8(react@18.2.0)
 
 devDependencies:
   '@types/eslint':
@@ -9142,6 +9151,19 @@ packages:
       stackback: 0.0.2
     dev: true
 
+  /wink-eng-lite-web-model@1.5.0(wink-nlp@1.14.1):
+    resolution: {integrity: sha512-5t27uqKRpQVyjb+ztIabmD2m76ct+5NP9e3TVxla4GBQzgPJnAHCynPw4KQa42BNn5xxi7b7E9P3akSFiYWHbg==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      wink-nlp: '>1.8.1'
+    dependencies:
+      wink-nlp: 1.14.1
+    dev: false
+
+  /wink-nlp@1.14.1:
+    resolution: {integrity: sha512-RIdUZI3ei3OB6OY5f3jNo74fmsfPV7cfwiJ2fvBM1xzGnnl2CjRJmwGwsO04n0xl28vDTtxj6AlhIb74XQLoqQ==}
+    dev: false
+
   /word-wrap@1.2.3:
     resolution: {integrity: sha512-Hz/mrNwitNRh/HUAtM/VT/5VH+ygD6DV7mYKZAtHOrbs8U7lvPS6xf7EJKMF0uW1KJCl0H701g3ZGus+muE5vQ==}
     engines: {node: '>=0.10.0'}
@@ -9338,4 +9360,20 @@ packages:
         optional: true
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /zustand@4.3.8(react@18.2.0):
+    resolution: {integrity: sha512-4h28KCkHg5ii/wcFFJ5Fp+k1J3gJoasaIbppdgZFO4BPJnsNxL0mQXBSFgOgAdCdBj35aDTPvdAJReTMntFPGg==}
+    engines: {node: '>=12.7.0'}
+    peerDependencies:
+      immer: '>=9.0'
+      react: '>=16.8'
+    peerDependenciesMeta:
+      immer:
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
+      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
