@@ -97,6 +97,7 @@ GOOGLE_CLIENT_SECRET=""
 COHERE_API_KEY=""
 HUGGINGFACE_API_KEY=""
 OPENAI_KEY=""
+```
 
 To run this project, make sure you have the latest node.js and npm version installed.
 You can also run the project using yarn or pnpm.
