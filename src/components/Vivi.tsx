@@ -108,6 +108,7 @@ const Vivi = (props: ViviProps) => {
         if (props.journalWrite !== true) {
           if (transcript.length > 0) {
             speak(`i understand`)
+            console.log(transcript)
             if (modelSentenceEncoder !== null) {
               const commandUnderstood = await recognizeCommand(transcript, props.commandList, modelSentenceEncoder)
               speak(`I will now ${commandUnderstood}`);
@@ -183,7 +184,6 @@ const Vivi = (props: ViviProps) => {
       lastVideoTime = video.currentTime;
       if (gestureRecognizer instanceof GestureRecognizer) {
         results = await gestureRecognizer.recognizeForVideo(video, nowInMs)
-        console.log(results)
       }
       if (results && results.gestures.length > 0) {
         if (results.gestures[0] && results.gestures[0][0] !== undefined) {
@@ -197,6 +197,7 @@ const Vivi = (props: ViviProps) => {
             SpeechRecognition.startListening({ continuous: true });
             props.setJournalWrite(true);
           } else if (results.gestures[0][0].categoryName === "Victory") {
+            resetTranscript();
             SpeechRecognition.startListening({ continuous: true })
             props.setJournalWrite(false)
           }
