@@ -14,7 +14,7 @@ export const posts: PostData[] = [
     date: "Jun 16, 2023",
     tag: "Life-Crisis",
     title: "I just realized...",
-    body: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Tempora expedita dicta totam aspernatur doloremque. Excepturi iste iusto eos enim reprehenderit nisi, accusamus delectus nihil quis facere in modi ratione libero!",
+    body: "I just realized that I'm going to be 30 in a few years. I'm not sure how I feel about that. I feel like I haven't accomplished anything in my life. I'm not sure what to do.",
     image:
       "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=731&q=80",
     userName: "Alex John",

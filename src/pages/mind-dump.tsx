@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { Loader } from "~/components/loaders";
 import Navbar from "~/components/navbar";
+import { useJournalStore } from "~/stores/journal";
 
 import { withAuth } from "~/middlewares";
 import { api } from "~/utils/api";
@@ -33,11 +34,12 @@ const MindDump = () => {
     formState: { errors },
   } = useForm<Journal>();
 
+  const journalId = useJournalStore((state) => state.id);
   const [selectedJournalId, setSelectedJournalId] = useState<string | null>(
-    null
+    journalId
   );
   const [journalStatus, setJournalStatus] = useState<JournalStatus>(
-    JournalStatus.NotUsing
+    journalId ? JournalStatus.Viewing : JournalStatus.NotUsing
   );
 
   const { data: journals } = api.journal.getUserJournals.useQuery();
