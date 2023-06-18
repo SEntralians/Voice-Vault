@@ -5,6 +5,7 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
+import { AnimationLoader } from "~/components/loaders";
 import { api } from "~/utils/api";
 import toast, { Toaster } from "react-hot-toast";
 import { withAuth } from "~/middlewares";
@@ -73,7 +74,7 @@ const StickyNotes: React.FC = () => {
   }, [notes]);
 
   if (!notes) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   return (

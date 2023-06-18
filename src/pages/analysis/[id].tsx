@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Modal, MiniModal } from "~/components/modals";
 import Navbar from "~/components/navbar/Navbar";
+import { AnimationLoader } from "~/components/loaders";
 import { match } from "ts-pattern";
 
 import type { FC } from "react";
@@ -23,7 +24,7 @@ const AnalysisPage: NextPage = () => {
   });
 
   if (!chat) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   const {
@@ -123,7 +124,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
     isPendingRequestLoading ||
     isChatAnalysisLoading
   ) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   return (

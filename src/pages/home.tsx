@@ -8,6 +8,7 @@ import {
   ChatBubbleBottomCenterIcon,
   MagnifyingGlassCircleIcon,
 } from "@heroicons/react/24/outline";
+import { AnimationLoader } from "~/components/loaders";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import Link from "next/link";
@@ -61,7 +62,7 @@ const Home: NextPage = () => {
   };
 
   if (!userDetails || !userChats) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
