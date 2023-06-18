@@ -18,6 +18,24 @@ export const chatRouter = createTRPCRouter({
         },
       });
     }),
+  getChats: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.chat.findMany({
+      where: {
+        OR: [
+          {
+            creatorId: ctx.session.user.id,
+          },
+          {
+            joinerId: ctx.session.user.id,
+          },
+        ],
+      },
+      include: {
+        creator: true,
+        joiner: true,
+      },
+    });
+  }),
   getMessages: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
