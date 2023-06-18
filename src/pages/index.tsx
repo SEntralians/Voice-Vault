@@ -100,13 +100,13 @@ const Home: NextPage = () => {
               <div className="flex min-h-screen items-center justify-center">
                 <Dialog.Overlay className="fixed inset-0 -z-10 bg-black opacity-30" />
 
-                <div className="w-1/2 rounded-lg bg-white p-8">
-                  <Dialog.Title className="mb-4 text-2xl font-bold">
+                <div className="w-1/2 rounded-lg bg-background-100 p-8">
+                  <Dialog.Title className="mb-4 text-2xl font-bold text-primary-200 text-center">
                     Save as Journal
                   </Dialog.Title>
 
                   <div className="my-4">
-                    <h1 className="text-lg font-extrabold">Title</h1>
+                    <h1 className="text-lg font-extrabold text-primary-200">Title</h1>
                     <input
                       className="w-full rounded border-2 border-gray-200 p-2"
                       placeholder="Title"
@@ -116,7 +116,7 @@ const Home: NextPage = () => {
                   </div>
 
                   <div className="my-4">
-                    <h1 className="text-lg font-extrabold">Content</h1>
+                    <h1 className="text-lg font-extrabold text-primary-200">Content</h1>
                     <textarea
                       className="h-52 w-full rounded border-2 border-gray-200 p-2"
                       placeholder="Content"
@@ -133,7 +133,7 @@ const Home: NextPage = () => {
                       Cancel
                     </button>
                     <button
-                      className="flex flex-row rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                      className="flex flex-row bg-primary-100 rounded px-4 py-2 text-white"
                       onClick={handleCreateJournal}
                     >
                       {isAddingJournal && <Loader />}
