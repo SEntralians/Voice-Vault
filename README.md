@@ -47,3 +47,76 @@ Easily search your previous journals based on keywords from the summaries genera
 
 https://github.com/SEntralians/Voice-Vault/assets/49836841/f8b41677-a308-480e-8ee5-48ced6794673
 
+
+## Technical Info
+
+The app was scaffolded using the t3 stack. https://create.t3.gg/
+
+Technologies used:
+
+- Typescript - 👨‍💻 Best programming language
+- Tailwind CSS - 💅 A powerful CSS Framework
+- Next.js - ⚡ A React Framework for server-side rendering
+- Prisma - ⚛️ A next generation ORM for Typescript
+- tRPC - 💨 A type-safe way to build APIs for TypeScript
+- OpenAI API - 🤖 A popular API for natural language processing
+
+## Setup Web App
+
+Make sure to copy and paste the `.env.example` file and rename to `.env` and provide the value strings.
+
+```sh
+# Since the ".env" file is gitignored, you can use the ".env.example" file to
+# build a new ".env" file when you clone the repo. Keep this file up-to-date
+# when you add new variables to `.env`.
+
+# This file will be committed to version control, so make sure not to have any
+# secrets in it. If you are cloning this repo, create a copy of this file named
+# ".env" and populate it with your secrets.
+
+# When adding additional environment variables, the schema in "/src/env.mjs"
+# should be updated accordingly.
+
+# Prisma
+# https://www.prisma.io/docs/reference/database-reference/connection-urls#env
+# Use a postgres database
+DATABASE_URL=""
+
+# Next Auth
+# You can generate a new secret on the command line with:
+# openssl rand -base64 32
+# https://next-auth.js.org/configuration/options#secret
+# NEXTAUTH_SECRET=""
+NEXTAUTH_URL="http://localhost:3000"
+
+# Next Auth Facebook Provider
+FACEBOOK_CLIENT_ID=""
+FACEBOOK_CLIENT_SECRET=""
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+COHERE_API_KEY=""
+HUGGINGFACE_API_KEY=""
+OPENAI_KEY=""
+
+To run this project, make sure you have the latest node.js and npm version installed.
+You can also run the project using yarn or pnpm.
+
+```sh
+$ git clone https://github.com/SEntralians/Voice-Vault voice-vault
+$ cd voice-vault
+$ npm install
+$ npm run db:push
+$ npm run dev
+```
+
+The following instructions will open the app. You can type [localhost:3000](localhost.3000) in your favorite browser to start using the app.
+
+```sh
+127.0.0.1:3000
+```
+
+or
+
+```sh
+localhost:3000
+```
