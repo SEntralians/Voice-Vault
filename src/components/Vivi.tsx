@@ -9,6 +9,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import * as sentenceEncoder from "@tensorflow-models/universal-sentence-encoder";
 import { UniversalSentenceEncoder } from "@tensorflow-models/universal-sentence-encoder";
+import { useRouter } from "next/router";
 import recognizeCommand from "~/utils/recognizeCommand";
 import { truncatedNormal } from "@tensorflow/tfjs";
 
@@ -24,6 +25,8 @@ interface ViviProps {
 }
 
 const Vivi = (props: ViviProps) => {
+  const router = useRouter();
+
   const demosSectionRef = useRef(null);
   const gestureRecognizerRef = useRef<GestureRecognizer>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -111,6 +114,17 @@ const Vivi = (props: ViviProps) => {
             if (modelSentenceEncoder !== null) {
               const commandUnderstood = await recognizeCommand(transcript, props.commandList, modelSentenceEncoder)
               speak(`I will now ${commandUnderstood}`);
+              if (commandUnderstood === "Go to My Mental Space") {
+                router.push('/home')
+              }
+
+              if (commandUnderstood === "Go to Discussions") {
+                router.push('/discussion')
+              }
+
+              if (commandUnderstood === "Go to Challenges") {
+                router.push('/challenges')
+              }
             }
           }
         }
@@ -178,6 +192,7 @@ const Vivi = (props: ViviProps) => {
       lastVideoTime = video.currentTime;
       if (gestureRecognizer instanceof GestureRecognizer) {
         results = await gestureRecognizer.recognizeForVideo(video, nowInMs)
+        console.log(results)
       }
       if (results && results.gestures.length > 0) {
         if (results.gestures[0] && results.gestures[0][0] !== undefined) {
