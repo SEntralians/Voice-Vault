@@ -8,6 +8,7 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import * as sentenceEncoder from "@tensorflow-models/universal-sentence-encoder";
+import { UniversalSentenceEncoder } from "@tensorflow-models/universal-sentence-encoder";
 import recognizeCommand from "~/utils/recognizeCommand";
 import { truncatedNormal } from "@tensorflow/tfjs";
 
@@ -29,7 +30,7 @@ const Vivi = (props: ViviProps) => {
   const gestureOutputRef = useRef(null);
   const [webcamRunning, setWebcamRunning] = useState(false);
   const [voices, setVoices] = useState([] as SpeechSynthesisVoice[]);
-  const [modelSentenceEncoder, setModelSentenceEncoder] = useState(null)
+  const [modelSentenceEncoder, setModelSentenceEncoder] = useState<UniversalSentenceEncoder | null>(null);
   const [command, setCommand] = useState('')
 
   const { transcript, listening, resetTranscript } = useSpeechRecognition();
@@ -107,8 +108,10 @@ const Vivi = (props: ViviProps) => {
         if (props.journalWrite !== true) {
           if (transcript.length > 0) {
             speak(`i understand`)
-            const commandUnderstood = await recognizeCommand(transcript, props.commandList, modelSentenceEncoder)
-            speak(`I will now ${commandUnderstood}`);
+            if (modelSentenceEncoder !== null) {
+              const commandUnderstood = await recognizeCommand(transcript, props.commandList, modelSentenceEncoder)
+              speak(`I will now ${commandUnderstood}`);
+            }
           }
         } else {
           speak(`Interesting`)
