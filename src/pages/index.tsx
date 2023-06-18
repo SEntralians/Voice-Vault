@@ -1,5 +1,5 @@
 import { type NextPage } from "next";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { Fragment, useState, useEffect } from "react";
 import { api } from "~/utils/api";
 import Vivi from "~/components/Vivi";
@@ -7,7 +7,7 @@ import Navbar from "~/components/navbar/Navbar";
 import { Dialog, Transition } from "@headlessui/react";
 import { Loader } from "~/components/loaders";
 import toast, { Toaster } from "react-hot-toast";
-import Image from 'next/image'
+import Image from "next/image";
 import commandsList from "~/utils/commandsList";
 
 const Home: NextPage = () => {
@@ -173,7 +173,7 @@ export default Home;
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
-  const [ isRolling, setIsRolling ] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
 
   const handleLogin = () => {
     setIsRolling(true);
@@ -181,27 +181,31 @@ const AuthShowcase: React.FC = () => {
   };
 
   return (
-    <div className="bg-secondary-100 h-screen w-screen flex items-center justify-center top-0 left-0 absolute">
-      <div className={`flex justify-center mb-6 transform absolute ${
+    <div className="absolute left-0 top-0 flex h-screen w-screen items-center justify-center bg-secondary-100">
+      <div
+        className={`absolute mb-6 flex transform justify-center ${
           isRolling ? "-translate-x-full -rotate-180" : ""
-        } transition-transform duration-1000`}>
-          <Image
-            src="images/logo_opaque.svg"
-            alt="Logo"
-            className="rounded-full border-2 border-primary-200"
-            width={600}
-            height={600}
-          />
+        } transition-transform duration-1000`}
+      >
+        <Image
+          src="images/logo_opaque.svg"
+          alt="Logo"
+          className="rounded-full border-2 border-primary-200"
+          width={600}
+          height={600}
+        />
       </div>
 
       <div
-        className={`w-96 max-w-96 bg-white bg-opacity-80 p-8 mt-96 rounded-lg shadow-md z-50 items-center justify-center`}
+        className={`max-w-96 z-50 mt-96 w-96 items-center justify-center rounded-lg bg-white bg-opacity-80 p-8 shadow-md`}
       >
-        <h2 className="text-5xl font-bold mb-4 mx-auto items-center justify-center text-center text-primary-200">VoiceVault</h2>
+        <h2 className="mx-auto mb-4 items-center justify-center text-center text-5xl font-bold text-primary-200">
+          VoiceVault
+        </h2>
         <div className="flex justify-center">
           <button
             onClick={handleLogin}
-            className="bg-primary-300 text-primary-200 font-bold font-mono hover:bg-blue-600 px-4 py-2 rounded-md focus:outline-none"
+            className="rounded-md bg-primary-300 px-4 py-2 font-mono font-bold text-primary-200 hover:bg-blue-600 focus:outline-none"
           >
             Sign in/Register with Google
           </button>

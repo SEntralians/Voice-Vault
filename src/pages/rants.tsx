@@ -5,6 +5,7 @@ import Draggable, {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
+import { AnimationLoader } from "~/components/loaders";
 import { api } from "~/utils/api";
 import toast, { Toaster } from "react-hot-toast";
 import { withAuth } from "~/middlewares";
@@ -73,7 +74,7 @@ const StickyNotes: React.FC = () => {
   }, [notes]);
 
   if (!notes) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   return (
@@ -91,7 +92,7 @@ const StickyNotes: React.FC = () => {
             maxLength={700}
           />
           <button
-            className="mt-2 w-full rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-600"
+            className="mt-2 w-full rounded bg-primary-400 px-4 py-2 font-bold text-white hover:bg-primary-300"
             onClick={handleNoteAdd}
           >
             Add Note

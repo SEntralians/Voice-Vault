@@ -9,6 +9,7 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import * as sentenceEncoder from "@tensorflow-models/universal-sentence-encoder";
 import { UniversalSentenceEncoder } from "@tensorflow-models/universal-sentence-encoder";
+import { useRouter } from "next/router";
 import recognizeCommand from "~/utils/recognizeCommand";
 import { truncatedNormal } from "@tensorflow/tfjs";
 
@@ -24,6 +25,8 @@ interface ViviProps {
 }
 
 const Vivi = (props: ViviProps) => {
+  const router = useRouter();
+
   const demosSectionRef = useRef(null);
   const gestureRecognizerRef = useRef<GestureRecognizer>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -38,9 +41,6 @@ const Vivi = (props: ViviProps) => {
   function handleListening() {
     if (listening) {
       SpeechRecognition.stopListening();
-      if (props.journalWrite) {
-        props.setJournalWrite(false);
-      }
     } else {
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
@@ -56,7 +56,6 @@ const Vivi = (props: ViviProps) => {
   }
 
   useEffect(() => {
-    // Get the voices that match the language code
     const chosenVoice = speechSynthesis
       .getVoices()
       .filter(
@@ -105,17 +104,29 @@ const Vivi = (props: ViviProps) => {
       if (listening) {
         speak("listening");
       } else {
-        if (props.journalWrite !== true) {
+        if (props.journalWrite) {
+          speak(`That was Interesting`)
+          props.setJournalWrite(false)
+        } else {
           if (transcript.length > 0) {
             speak(`i understand`)
+            console.log(transcript)
             if (modelSentenceEncoder !== null) {
               const commandUnderstood = await recognizeCommand(transcript, props.commandList, modelSentenceEncoder)
               speak(`I will now ${commandUnderstood}`);
+              if (commandUnderstood === "Go to My Mental Space") {
+                router.push('/home')
+              }
+
+              if (commandUnderstood === "Go to Discussions") {
+                router.push('/discussion')
+              }
+
+              if (commandUnderstood === "Go to Challenges") {
+                router.push('/challenges')
+              }
             }
           }
-        } else {
-          speak(`Interesting`)
-          props.setJournalWrite(false)
         }
       }
     }
@@ -124,9 +135,7 @@ const Vivi = (props: ViviProps) => {
   }, [listening]);
 
   useEffect(() => {
-    if (props.greeted === false) {
-      speak(props.message);
-    }
+    speak(props.message)
     props.setGreeted(true);
   }, [voices]);
 
@@ -197,6 +206,7 @@ const Vivi = (props: ViviProps) => {
             SpeechRecognition.startListening({ continuous: true });
             props.setJournalWrite(true);
           } else if (results.gestures[0][0].categoryName === "Victory") {
+            resetTranscript();
             SpeechRecognition.startListening({ continuous: true })
             props.setJournalWrite(false)
           }

@@ -1,9 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
-import {
-  getFallacyClassification,
-  getToxicityLevel,
-} from "../services/huggingface";
 import { TRPCError } from "@trpc/server";
 import { formatToDialogue } from "~/server/api/helpers";
 import { askChatGpt } from "~/server/api/services/openai";
@@ -66,11 +62,16 @@ export const analysisRouter = createTRPCRouter({
           creatorSelectedTopic: true,
           joinerSelectedTopic: true,
           description: true,
+          analysis: true,
         },
       });
 
       if (!chat) {
         throw new Error("Chat not found");
+      }
+
+      if (chat.analysis) {
+        return "DONE";
       }
 
       const formattedMessages = chat.messages.map((message) => ({
@@ -97,49 +98,45 @@ export const analysisRouter = createTRPCRouter({
         "Can you please give me detailed information for each debater regarding their relevance to the topic, factual information, organization, clarity";
 
       try {
-        const [classification, toxicity, analsyis] = await Promise.all([
-          getFallacyClassification({
-            inputs: chat.messages.map((message) => message.text),
-          }),
-          getToxicityLevel({
-            inputs: chat.messages.map((message) => message.text),
-          }),
-          askChatGpt(analysisPrompt),
-        ]);
+        const gptMessageResults = await Promise.all(
+          chat.messages.map(async (message) => {
+            const messagePrompt = `I want you to analyze the following message: ${message.text}. Can you please provide details if the fallacy is present and its percentage score (0-100), if 
+            toxicity is present and its percentage score (0-100), if the message is relevant to the topic and its percentage score (0-100), if the message is factual and its percentage score (0-100), if the message is organized and its percentage score (0-100), if the message is clear and its percentage score (0-100).`;
 
-        if (!classification || !toxicity) {
+            const analysis = await askChatGpt(messagePrompt);
+
+            return {
+              id: message.id,
+              analysis,
+            };
+          })
+        ).then((result) =>
+          result.filter((message) => message.analysis !== undefined)
+        );
+
+        const chatAnalysis = await askChatGpt(analysisPrompt);
+
+        if (!chatAnalysis) {
           throw new Error("Something went wrong with the analysis");
         }
 
         await ctx.prisma.$transaction([
-          ...classification.map((c, idx) =>
-            ctx.prisma.message.update({
-              where: {
-                id: chat.messages[idx]?.id,
-              },
-              data: {
-                fallacyPrediction: c?.label,
-                fallacyScore: c?.score,
-              },
-            })
-          ),
-          ...toxicity.map((t, idx) =>
-            ctx.prisma.message.update({
-              where: {
-                id: chat.messages[idx]?.id,
-              },
-              data: {
-                toxicityPrediction: t?.label,
-                toxicityScore: t?.score,
-              },
-            })
-          ),
           ctx.prisma.chat.update({
             where: {
               id: input.chatId,
             },
             data: {
-              analysis: analsyis,
+              analysis: chatAnalysis,
+              messages: {
+                updateMany: gptMessageResults.map((message) => ({
+                  where: {
+                    id: message.id,
+                  },
+                  data: {
+                    analysis: message.analysis,
+                  },
+                })),
+              },
             },
           }),
         ]);

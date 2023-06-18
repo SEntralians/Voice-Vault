@@ -5,6 +5,7 @@ import { api } from "~/utils/api";
 import toast, { Toaster } from "react-hot-toast";
 import type { NextPage } from "next";
 import Navbar from "~/components/navbar/Navbar";
+import { AnimationLoader } from "~/components/loaders";
 
 const AIChatPage: NextPage = () => {
   const utils = api.useContext();
@@ -34,7 +35,7 @@ const AIChatPage: NextPage = () => {
   };
 
   if (!conversations) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   return (
