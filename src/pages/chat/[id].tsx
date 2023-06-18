@@ -155,7 +155,7 @@ const CreatorChatBox: FC<CreatorChatBoxProps> = ({
       <div className="flex bg-background-100 px-10 py-20">
         <div className="w-3/12">
           <button
-            className="mb-2 rounded-md bg-blue-500 px-4 py-2 text-white hover:opacity-80"
+            className="mb-2 rounded-md bg-primary-100 px-4 py-2 text-white hover:opacity-80"
             onClick={copyCode}
           >
             Share
@@ -217,9 +217,14 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
   rightTopic,
   description,
 }) => {
+  const utils = api.useContext();
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
 
-  const { mutate: startChat } = api.chat.startChat.useMutation();
+  const { mutate: startChat } = api.chat.startChat.useMutation({
+    onSuccess: async () => {
+      await utils.chat.invalidate();
+    },
+  });
 
   const handleStartChat = () => {
     if (selectedTopic === null) {
@@ -274,11 +279,11 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
             </div>
           </div>
           {/* text for choose a top */}
-          <div className="mt-5 rounded-3xl p-4 text-white">Choose a side: </div>
-          <div className="rounded-3xl p-4 text-white">Topic: {description}</div>
+          <div className="mt-5 rounded-3xl p-4 text-black">Choose a side: </div>
+          <div className="rounded-3xl p-4 text-black">Topic: {description}</div>
           <div
-            className={`my-5 cursor-pointer rounded-lg bg-white p-4 ${
-              isLeftSelected ? "bg-white/40" : ""
+            className={`my-5 cursor-pointer rounded-lg p-4 ${
+              isLeftSelected ? "bg-primary-100" : "bg-white"
             }`}
             onClick={selectLeftTopic}
           >
@@ -287,8 +292,8 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
             </div>
           </div>
           <div
-            className={`my-5 cursor-pointer rounded-lg bg-white p-4 ${
-              isRightSelected ? "bg-white/40" : ""
+            className={`my-5 cursor-pointer rounded-lg p-4 ${
+              isRightSelected ? "bg-primary-100" : "bg-white"
             }`}
             onClick={selectRightTopic}
           >
@@ -298,7 +303,7 @@ const JoinerChatBox: FC<JoinerChatBoxProps> = ({
           </div>
           <button
             disabled={selectedTopic === null}
-            className="mb-2 rounded-md bg-blue-500 px-4 py-2 text-white"
+            className="mb-2 rounded-md bg-primary-100 px-4 py-2 text-white"
             onClick={handleStartChat}
           >
             Join
@@ -400,6 +405,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
         userId,
         chatId,
       });
+      await utils.chat.invalidate();
     },
     onError: (error) => {
       toast.error(error.message);
