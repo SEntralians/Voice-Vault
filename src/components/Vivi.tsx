@@ -38,9 +38,6 @@ const Vivi = (props: ViviProps) => {
   function handleListening() {
     if (listening) {
       SpeechRecognition.stopListening();
-      if (props.journalWrite) {
-        props.setJournalWrite(false);
-      }
     } else {
       resetTranscript();
       SpeechRecognition.startListening({ continuous: true });
@@ -56,7 +53,6 @@ const Vivi = (props: ViviProps) => {
   }
 
   useEffect(() => {
-    // Get the voices that match the language code
     const chosenVoice = speechSynthesis
       .getVoices()
       .filter(
@@ -105,7 +101,10 @@ const Vivi = (props: ViviProps) => {
       if (listening) {
         speak("listening");
       } else {
-        if (props.journalWrite !== true) {
+        if (props.journalWrite) {
+          speak(`That was Interesting`)
+          props.setJournalWrite(false)
+        } else {
           if (transcript.length > 0) {
             speak(`i understand`)
             console.log(transcript)
@@ -114,9 +113,6 @@ const Vivi = (props: ViviProps) => {
               speak(`I will now ${commandUnderstood}`);
             }
           }
-        } else {
-          speak(`Interesting`)
-          props.setJournalWrite(false)
         }
       }
     }
@@ -125,9 +121,7 @@ const Vivi = (props: ViviProps) => {
   }, [listening]);
 
   useEffect(() => {
-    if (props.greeted === false) {
-      speak(props.message);
-    }
+    speak(props.message)
     props.setGreeted(true);
   }, [voices]);
 
