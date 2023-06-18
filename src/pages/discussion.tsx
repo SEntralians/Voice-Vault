@@ -142,8 +142,8 @@ const DiscussionsPage: React.FC = () => {
                               </button>
                             </form>
                           </div>
-                          <div className="rounded-b-lg bg-primary-300 px-8 py-4">
-                            <h1 className="mb-4 text-lg font-bold text-primary-200">
+                          <div className="rounded-b-lg bg-secondary-200 px-8 py-4">
+                            <h1 className="mb-4 text-lg font-bold text-white">
                               Join Room
                             </h1>
                             <div className="mb-4">
