@@ -136,13 +136,13 @@ const DiscussionsPage: React.FC = () => {
                               </div>
                               <button
                                 type="submit"
-                                className="w-full rounded-md bg-blue-500 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                className="w-full rounded-md bg-secondary-200 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                               >
                                 Create Chat
                               </button>
                             </form>
                           </div>
-                          <div className="rounded-b-lg bg-blue-500 px-8 py-4">
+                          <div className="rounded-b-lg bg-secondary-200 px-8 py-4">
                             <h1 className="mb-4 text-lg font-bold text-white">
                               Join Room
                             </h1>
@@ -157,7 +157,7 @@ const DiscussionsPage: React.FC = () => {
                             </div>
                             <button
                               onClick={handleJoinChat}
-                              className="w-full rounded-md bg-blue-500 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                              className="w-full rounded-md bg-secondary-200 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-primary-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                             >
                               Join Room
                             </button>
