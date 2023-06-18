@@ -11,6 +11,12 @@ We believe that it is vital toprovide tools to cope with mental healthissues and
 
 VoiceVault leverages artificial intelligence and big data to learn fromuser interactions and provide personalized feedback and insights. Voice Vault is aversatile and accessible tool that can helpusers improve their mental well-being, critical thinking, and communication skills.
 
+# Demo
+https://youtu.be/UUPVj4JouUQ
+
+# Live App
+https://voice-vault.vercel.app/
+
 # Features
 
 ## Voice and Webcam AI Assistant
