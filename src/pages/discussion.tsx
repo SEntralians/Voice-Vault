@@ -102,7 +102,7 @@ const DiscussionsPage: React.FC = () => {
                   <Advertisement data={[]} />
                 </div>
                 <div className="mt-10">
-                  <h1 className="mb-4 ml-10 text-xl font-bold text-gray-700">
+                  <h1 className="mb-4 ml-10 text-xl font-bold text-primary-200">
                     Debate
                   </h1>
                   <div className="mx-auto max-w-sm">
@@ -115,7 +115,7 @@ const DiscussionsPage: React.FC = () => {
                                 <input
                                   type="text"
                                   {...registerCreate("leftTopic")}
-                                  className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-blue-500"
+                                  className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-primary-100"
                                   placeholder="Enter left topic"
                                 />
                               </div>
@@ -123,33 +123,33 @@ const DiscussionsPage: React.FC = () => {
                                 <input
                                   type="text"
                                   {...registerCreate("rightTopic")}
-                                  className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-blue-500"
+                                  className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-primary-100"
                                   placeholder="Enter right topic"
                                 />
                               </div>
                               <div className="mb-4">
                                 <textarea
                                   {...registerCreate("description")}
-                                  className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-blue-500"
+                                  className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-primary-100"
                                   placeholder="Enter description"
                                 />
                               </div>
                               <button
                                 type="submit"
-                                className="w-full rounded-md bg-blue-500 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                                className="w-full rounded-md bg-primary-100 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-primary-200 focus:ring-opacity-50"
                               >
                                 Create Chat
                               </button>
                             </form>
                           </div>
-                          <div className="rounded-b-lg bg-blue-500 px-8 py-4">
-                            <h1 className="mb-4 text-lg font-bold text-white">
+                          <div className="rounded-b-lg bg-primary-300 px-8 py-4">
+                            <h1 className="mb-4 text-lg font-bold text-primary-200">
                               Join Room
                             </h1>
                             <div className="mb-4">
                               <input
                                 type="text"
-                                className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-blue-500"
+                                className="w-full rounded-md border px-4 py-2 focus:outline-none focus:ring-primary-300"
                                 placeholder="Enter room id"
                                 value={roomId}
                                 onChange={(e) => setRoomId(e.target.value)}
@@ -157,7 +157,7 @@ const DiscussionsPage: React.FC = () => {
                             </div>
                             <button
                               onClick={handleJoinChat}
-                              className="w-full rounded-md bg-blue-500 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                              className="w-full rounded-md bg-primary-100 px-4 py-2 text-white transition duration-300 ease-in-out hover:bg-secondary-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                             >
                               Join Room
                             </button>
