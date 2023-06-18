@@ -16,18 +16,18 @@ const Post: React.FC<PostProps> = ({ data }) => {
     <div className="max-w-4xl px-10 py-6 bg-white rounded-lg shadow-md">
       <div className="flex justify-between items-center">
         <span className="font-light text-gray-600">{data.date}</span>
-        <a className="px-2 py-1 bg-gray-600 text-gray-100 font-bold rounded hover:bg-gray-500" href="#">
+        <a className="px-2 py-1 bg-secondary-200 text-gray-100 font-bold rounded hover:bg-gray-500" href="#">
           {data.tag}
         </a>
       </div>
       <div className="mt-2">
-        <a className="text-2xl text-gray-700 font-bold hover:underline" href="#">
+        <a className="text-2xl text-primary-200 font-bold hover:underline" href="#">
           {data.title}
         </a>
         <p className="mt-2 text-gray-600">{data.body}</p>
       </div>
       <div className="flex justify-between items-center mt-4">
-        <a className="text-blue-500 hover:underline" href="#">
+        <a className="text-primary-100 hover:underline" href="#">
           Read more
         </a>
         <div>
