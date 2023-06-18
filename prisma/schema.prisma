@@ -142,6 +142,7 @@ model Message {
     toxicityScore      Float?
     user               User        @relation(fields: [userId], references: [id])
     userId             String
+    analysis           String?     @db.Text
 }
 
 model VerificationToken {

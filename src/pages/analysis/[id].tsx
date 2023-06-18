@@ -6,6 +6,7 @@ import { api } from "~/utils/api";
 import { useSession } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { Modal, MiniModal } from "~/components/modals";
+import Navbar from "~/components/navbar/Navbar";
 import { match } from "ts-pattern";
 
 import type { FC } from "react";
@@ -127,28 +128,29 @@ const ChatMessage: FC<ChatMessageProps> = ({
 
   return (
     <>
+      <Navbar currentPage="analysis" />
       {chatMessages &&
         ifUserHasOffered !== undefined &&
         pendingRequest &&
         chatAnalysis && (
-          <div className="m-10 flex h-screen flex-row items-center justify-center gap-5 bg-primary-100">
-            <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-gray-900 shadow-xl">
-              <div className="flex items-center bg-primary-200 px-10 py-5">
+          <div className="m-10 flex h-screen flex-row items-center justify-center gap-5">
+            <div className="my-20 flex h-screen w-full max-w-5xl flex-col overflow-y-scroll rounded-lg bg-white shadow-xl">
+              <div className="flex items-center bg-primary-300 px-10 py-5">
                 <div className="flex items-center space-x-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-profile-left">
                     <UserCircleIcon className="h-6 w-6 text-white" />
                   </div>
-                  <div className="text-lg font-medium text-white">
+                  <div className="text-lg font-medium text-black">
                     {joiner?.name}
                   </div>
                 </div>
-                <div className="mx-4 flex-1 text-center text-lg font-medium text-white">
+                <div className="mx-4 flex-1 text-center text-lg font-extrabold text-black">
                   {description}
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500">
+                <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-profile-right">
                   <UserCircleIcon className="h-4 w-4 text-white" />
                 </div>
-                <div className="text-lg font-medium text-white">
+                <div className="text-lg font-medium text-black">
                   {creator.name}
                 </div>
               </div>
@@ -161,19 +163,19 @@ const ChatMessage: FC<ChatMessageProps> = ({
                   >([isCreator, chatMessage.type])
                     .with([true, "CREATOR"], () => ({
                       position: "justify-end",
-                      color: "bg-blue-500",
+                      color: "bg-primary-100 text-white",
                     }))
                     .with([true, "JOINER"], () => ({
                       position: "justify-start",
-                      color: "bg-gray-700",
+                      color: "bg-primary-300 text-black",
                     }))
                     .with([false, "CREATOR"], () => ({
                       position: "justify-start",
-                      color: "bg-gray-700",
+                      color: "bg-primary-300 text-black",
                     }))
                     .with([false, "JOINER"], () => ({
                       position: "justify-end",
-                      color: "bg-blue-500",
+                      color: "bg-primary-100 text-white",
                     }))
                     .exhaustive();
 
@@ -184,7 +186,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
                       onClick={() => openModal(chatMessage)}
                     >
                       <div
-                        className={`${messagePattern.color} w-96 cursor-pointer rounded-lg px-3 py-2 text-white`}
+                        className={`${messagePattern.color} w-96 rounded-lg px-3 py-2`}
                       >
                         {chatMessage.text}
                       </div>
@@ -193,34 +195,35 @@ const ChatMessage: FC<ChatMessageProps> = ({
                 })}
               </div>
             </div>
-            <div className="flex h-screen flex-col items-center rounded-lg bg-gray-900 p-10">
-              <div className="mb-4 rounded-lg border bg-white p-4">
-                <div className="mb-2 rounded-lg border p-2">
-                  <div className="text-sm text-gray-500">
-                    Joiner Selected Topic
+            <div className="flex h-screen flex-col items-center rounded-lg bg-primary-300 px-5 py-10">
+              <div className="mb-4 w-full rounded-lg border bg-white p-4">
+                <div className="flex h-full flex-row gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-profile-left">
+                    <UserCircleIcon className="h-6 w-6 text-white" />
                   </div>
-                </div>
-                <div className="flex h-full items-center justify-center">
-                  <div className="mb-5 text-2xl font-bold text-blue-500">
-                    {joinerSelectedTopic}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-4 rounded-lg border bg-white p-4">
-                <div className="mb-2 rounded-lg border p-2">
-                  <div className="text-sm text-gray-500">
-                    Creator Selected Topic
-                  </div>
-                </div>
-                <div className="flex h-full items-center justify-center">
-                  <div className="mb-5 text-2xl font-bold text-red-500">
-                    {creatorSelectedTopic}
+                  <div className="flex flex-col gap-1">
+                    <div className="text-lg font-bold">
+                      {joinerSelectedTopic}
+                    </div>
+                    <div className="text-sm">{joiner?.name ?? "N/A"}</div>
                   </div>
                 </div>
               </div>
 
-              {/*  eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */}
+              <div className="mb-4 w-full rounded-lg border bg-white p-4">
+                <div className="flex h-full flex-row gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-profile-right">
+                    <UserCircleIcon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="text-lg font-bold">
+                      {creatorSelectedTopic}
+                    </div>
+                    <div className="text-sm">{creator.name}</div>
+                  </div>
+                </div>
+              </div>
+
               <Modal description={chatAnalysis.analysis ?? ""} />
             </div>
           </div>
@@ -228,14 +231,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
       {isModalOpen && (
         <>
           <MiniModal
-            chatMessage={{
-              id: selectedChatMessage?.id ?? "",
-              text: `${selectedChatMessage?.fallacyPrediction ?? ""} - ${
-                selectedChatMessage?.fallacyScore ?? ""
-              }   ${selectedChatMessage?.toxicityPrediction ?? ""} - ${
-                selectedChatMessage?.toxicityScore ?? ""
-              }`,
-            }}
+            chatMessage={selectedChatMessage?.analysis ?? "No analysis yet."}
             closeModal={closeModal}
           />
         </>
