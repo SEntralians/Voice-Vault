@@ -13,6 +13,7 @@ import { match } from "ts-pattern";
 import { MESSAGE_LIMIT } from "~/constants";
 import { DonePage } from "~/components/chat";
 import Navbar from "~/components/navbar";
+import { AnimationLoader } from "~/components/loaders";
 
 import type { ChangeEvent, FC } from "react";
 import type { User, ChatStatus, MessageType } from "@prisma/client";
@@ -28,7 +29,7 @@ const Chat: NextPage = () => {
   });
 
   if (!chat) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   const {
@@ -429,7 +430,7 @@ const ChatMessage: FC<ChatMessageProps> = ({
   };
 
   if (isMessagesLoading || isOfferLoading || isPendingRequestLoading) {
-    return <div>Loading...</div>;
+    return <AnimationLoader />;
   }
 
   return (
