@@ -8,6 +8,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Loader } from "~/components/loaders";
 import toast, { Toaster } from "react-hot-toast";
 import Image from 'next/image'
+import commandsList from "~/utils/commandsList";
 
 const Home: NextPage = () => {
   const { data: sessionData } = useSession();
@@ -151,6 +152,7 @@ const Home: NextPage = () => {
             journalWrite={journalWrite}
             setJournalText={setJournalText}
             journalText={journalText}
+            commandList={commandsList.index}
           />
         </div>
       ) : (
